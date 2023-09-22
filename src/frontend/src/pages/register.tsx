@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/register.css"
 
 // Define a function component for the form field
 interface FormFieldProps {
@@ -51,6 +52,35 @@ function Register() {
     const [taxIdNum, setTaxIdNum] = useState("");
     const [recAddress, setRecAddress] = useState("");
 
+    const handleCancel = () => {
+        setOrgNameth("");
+        setOrgNameEn("");
+        setAddress("");
+        setPhone("");
+        setFax("");
+        setCoName("");
+        setCoEmail("");
+        setCoLine("");
+        setRepName("");
+        setRepPosition("");
+        setRepAgency("");
+        setRepPhone("");
+        setRepFax("");
+        setRepEmail("");
+        setRepLine("");
+        setAltRepName("");
+        setAltRepPosition("");
+        setAltRepAgency("");
+        setAltRepPhone("");
+        setAltRepFax("");
+        setAltRepEmail("");
+        setAltRepLine("");
+        setType("");
+        setRecName("");
+        setTaxIdNum("");
+        setRecAddress("");
+    }
+
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -91,7 +121,7 @@ function Register() {
         formData.append('recAddress', recAddress);
 
         try {
-            const response = await fetch("/register.php", {
+            const response = await fetch("http://localhost/register.php", {
                 method: 'POST',
                 body: formData,
             });
@@ -109,40 +139,60 @@ function Register() {
 
     return (
         <div>
+            {/* Background with random shapes */}
+            <div className="random-shapes"></div>
             <form onSubmit={handleSubmit}>
-            {/* Organization */}
-            <FormField label="ชื่อองค์กรภาษาไทย" type="text" value={orgNameth} onChange={(e) => setOrgNameth(e.target.value)} />
-            <FormField label="ชื่อองค์กรภาษาอังกฤษ" type="text" value={orgNameEn} onChange={(e) => setOrgNameEn(e.target.value)} />
-            <FormField label="ที่อยู่หน่วยงาน" type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
-            <FormField label="โทรศัพท์" type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <FormField label="แฟกซ์" type="text" value={fax} onChange={(e) => setFax(e.target.value)} />
-            {/* Coordinator */}
-            <FormField label="ชื่อผู้ประสานงาน" type="text" value={coName} onChange={(e) => setCoName(e.target.value)} />
-            <FormField label="อีเมล" type="text" value={coEmail} onChange={(e) => setCoEmail(e.target.value)} />
-            <FormField label="Line" type="text" value={coLine} onChange={(e) => setCoLine(e.target.value)} />
-            {/* Organization representative */}
-            <FormField label="ชื่อและนามสกุล" type="text" value={repName} onChange={(e) => setRepName(e.target.value)} />
-            <FormField label="ตำแหน่ง" type="text" value={repPosition} onChange={(e) => setRepPosition(e.target.value)} />
-            <FormField label="หน่วยงาน" type="text" value={repAgency} onChange={(e) => setRepAgency(e.target.value)} />
-            <FormField label="โทรศัพท์" type="text" value={repAgency} onChange={(e) => setRepPhone(e.target.value)} />
-            <FormField label="แฟกซ์" type="text" value={repFax} onChange={(e) => setRepFax(e.target.value)} />
-            <FormField label="อีเมล" type="text" value={repEmail} onChange={(e) => setRepEmail(e.target.value)} />
-            <FormField label="Line" type="text" value={repLine} onChange={(e) => setRepLine(e.target.value)} />
-            {/* Alternate representative */}
-            <FormField label="ชื่อและนามสกุล" type="text" value={altRepName} onChange={(e) => setAltRepName(e.target.value)} />
-            <FormField label="ตำแหน่ง" type="text" value={altRepPosition} onChange={(e) => setAltRepPosition(e.target.value)} />
-            <FormField label="หน่วยงาน" type="text" value={altRepAgency} onChange={(e) => setAltRepAgency(e.target.value)} />
-            <FormField label="โทรศัพท์" type="text" value={altRepPhone} onChange={(e) => setAltRepPhone(e.target.value)} />
-            <FormField label="แฟกซ์" type="text" value={altRepFax} onChange={(e) => setAltRepFax(e.target.value)} />
-            <FormField label="อีเมล" type="text" value={altRepEmail} onChange={(e) => setAltRepEmail(e.target.value)} />
-            <FormField label="Line" type="text" value={altRepLine} onChange={(e) => setAltRepLine(e.target.value)} />
-            {/* Types of Registration */}
-            <FormField label="ประเภทการลงทะเบียน" type="text" value={type} onChange={(e) => setType(e.target.value)} />
-            {/* Payment */}
-            <FormField label="ออกใบเสร็จในนาม" type="text" value={recName} onChange={(e) => setRecName(e.target.value)} />
-            <FormField label="เลขประจําตัวผู้เสียภาษี" type="text" value={taxIdNum} onChange={(e) => setTaxIdNum(e.target.value)} />
-            <FormField label="ที่อยู่ในการออกใบเสร็จ" type="text" value={recAddress} onChange={(e) => setRecAddress(e.target.value)} />
-        <button type="submit">สมัครสมาชิค</button>
+                <div className="form">
+                    <div className="org-form">
+                        {/* Organization */}
+                        <FormField label="ชื่อองค์กรภาษาไทย" type="text" value={orgNameth} onChange={(e) => setOrgNameth(e.target.value)} />
+                        <FormField label="ชื่อองค์กรภาษาอังกฤษ" type="text" value={orgNameEn} onChange={(e) => setOrgNameEn(e.target.value)} />
+                        <FormField label="ที่อยู่หน่วยงาน" type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+                        <FormField label="โทรศัพท์" type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                        <FormField label="แฟกซ์" type="text" value={fax} onChange={(e) => setFax(e.target.value)} />
+                    </div>
+                    <div className="co-form">
+                        {/* Coordinator */}
+                        <FormField label="ชื่อผู้ประสานงาน" type="text" value={coName} onChange={(e) => setCoName(e.target.value)} />
+                        <FormField label="อีเมล" type="text" value={coEmail} onChange={(e) => setCoEmail(e.target.value)} />
+                        <FormField label="Line" type="text" value={coLine} onChange={(e) => setCoLine(e.target.value)} />
+                    </div>
+                    <div className="rep-form">
+                        {/* Organization representative */}
+                        <FormField label="ชื่อและนามสกุล" type="text" value={repName} onChange={(e) => setRepName(e.target.value)} />
+                        <FormField label="ตำแหน่ง" type="text" value={repPosition} onChange={(e) => setRepPosition(e.target.value)} />
+                        <FormField label="หน่วยงาน" type="text" value={repAgency} onChange={(e) => setRepAgency(e.target.value)} />
+                        <FormField label="โทรศัพท์" type="text" value={repAgency} onChange={(e) => setRepPhone(e.target.value)} />
+                        <FormField label="แฟกซ์" type="text" value={repFax} onChange={(e) => setRepFax(e.target.value)} />
+                        <FormField label="อีเมล" type="text" value={repEmail} onChange={(e) => setRepEmail(e.target.value)} />
+                        <FormField label="Line" type="text" value={repLine} onChange={(e) => setRepLine(e.target.value)} />
+                    </div>
+                    <div className="alt-rep-form">
+                        {/* Alternate representative */}
+                        <FormField label="ชื่อและนามสกุล" type="text" value={altRepName} onChange={(e) => setAltRepName(e.target.value)} />
+                        <FormField label="ตำแหน่ง" type="text" value={altRepPosition} onChange={(e) => setAltRepPosition(e.target.value)} />
+                        <FormField label="หน่วยงาน" type="text" value={altRepAgency} onChange={(e) => setAltRepAgency(e.target.value)} />
+                        <FormField label="โทรศัพท์" type="text" value={altRepPhone} onChange={(e) => setAltRepPhone(e.target.value)} />
+                        <FormField label="แฟกซ์" type="text" value={altRepFax} onChange={(e) => setAltRepFax(e.target.value)} />
+                        <FormField label="อีเมล" type="text" value={altRepEmail} onChange={(e) => setAltRepEmail(e.target.value)} />
+                        <FormField label="Line" type="text" value={altRepLine} onChange={(e) => setAltRepLine(e.target.value)} />
+                    </div>
+                    <div className="type-form">
+                        {/* Types of Registration */}
+                        <FormField label="ประเภทการลงทะเบียน" type="text" value={type} onChange={(e) => setType(e.target.value)} />
+                    </div>
+                    <div className="paym-form">
+                        {/* Payment */}
+                        <FormField label="ออกใบเสร็จในนาม" type="text" value={recName} onChange={(e) => setRecName(e.target.value)} />
+                        <FormField label="เลขประจําตัวผู้เสียภาษี" type="text" value={taxIdNum} onChange={(e) => setTaxIdNum(e.target.value)} />
+                        <FormField label="ที่อยู่ในการออกใบเสร็จ" type="text" value={recAddress} onChange={(e) => setRecAddress(e.target.value)} />
+                    </div>
+                </div>     
+                <div className="btn-container">
+                    <button type="submit">สมัครสมาชิค</button>
+                    <button type="reset">ยกเลิก</button>
+                </div>
+        
             </form>
         </div>
     );
