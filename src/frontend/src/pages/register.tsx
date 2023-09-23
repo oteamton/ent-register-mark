@@ -46,11 +46,32 @@ function Register() {
     const [altRepEmail, setAltRepEmail] = useState("");
     const [altRepLine, setAltRepLine] = useState("");
     // Types of Registration
-    const [type, setType] = useState("");
+    const [typeA, setTypeA] = useState(false);
+    const [typeB, setTypeB] = useState(false);
+    const [selectedType, setSelectedType] = useState('');
     // Payment
     const [recName, setRecName] = useState("");
     const [taxIdNum, setTaxIdNum] = useState("");
     const [recAddress, setRecAddress] = useState("");
+
+    const handleBoxACheck = () => {
+        setTypeA(!typeA);
+        setTypeB(false);
+        if (!typeA) {
+            setSelectedType('สมาชิคแบบที่ 1');
+          } else {
+            setSelectedType('');
+          }
+    };
+    const handleBoxBCheck = () => {
+        setTypeB(!typeB);
+        setTypeA(false);
+        if (!typeB) {
+            setSelectedType('สมาชิกแบบที่ 2');
+          } else {
+            setSelectedType('');
+          }
+    };
 
     const handleCancel = () => {
         setOrgNameth("");
@@ -75,7 +96,6 @@ function Register() {
         setAltRepFax("");
         setAltRepEmail("");
         setAltRepLine("");
-        setType("");
         setRecName("");
         setTaxIdNum("");
         setRecAddress("");
@@ -114,7 +134,12 @@ function Register() {
         formData.append('altRepEmail', altRepEmail);
         formData.append('altRepLine', altRepLine);
         // Types of Registration
-        formData.append('type', type);
+        if (typeA){
+            formData.append('typeA', 'setTypeA');
+        }
+        if (typeB){
+            formData.append('typeB', 'setTypeB');
+        }
         // Payment
         formData.append('recName', recName);
         formData.append('taxIdNum', taxIdNum);
@@ -179,7 +204,32 @@ function Register() {
                     </div>
                     <div className="type-form">
                         {/* Types of Registration */}
-                        <FormField label="ประเภทการลงทะเบียน" type="text" value={type} onChange={(e) => setType(e.target.value)} />
+                        <FormField
+                            label="ประเภทการลงทะเบียน"
+                            type="text"
+                            value={selectedType}
+                            onChange={(e) => setSelectedType(e.target.value)}
+                        />
+                        <div className="checkbox-container">
+                            <label className="checkbox-label" htmlFor="checkboxA">แบบที่ 1
+                            <input
+                                type="checkbox"
+                                checked={typeA}
+                                onChange={handleBoxACheck}
+                                // className="checkbox-input"
+                                id="checkboxA"
+                            />
+                            </label>
+                            <label className="checkbox-label" htmlFor="checkboxB" >แบบที่ 2
+                            <input
+                                type="checkbox"
+                                checked={typeB}
+                                onChange={handleBoxBCheck}
+                                // className="checkbox-input"
+                                id="checkboxB"
+                            />
+                            </label>
+                        </div>
                     </div>
                     <div className="paym-form">
                         {/* Payment */}

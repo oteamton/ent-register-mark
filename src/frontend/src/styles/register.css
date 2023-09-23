@@ -57,7 +57,7 @@ body {
 }
 
 .org-form, .co-form, .rep-form, .alt-rep-form, .type-form, .paym-form {
-  display: block;
+  /* display: block; */
   padding: 15px; /* Increased padding for better spacing */
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft box shadow */
@@ -87,6 +87,19 @@ label{
   font-weight: 500;
   text-align: left;
   padding: 5px;
+}
+
+.checkbox-container .checkbox-label {
+  display: flex;
+  justify-content: flex-start!important;
+  /* gap: 10px; Adjust the gap as needed */
+}
+
+/* Specific selector to target the checkbox inputs within type-form */
+.type-form .checkbox-container .checkbox-input {
+  /* margin-right: 5px; */
+  cursor: pointer;
+  transform: scale(1.2); /* Adjust the scale for checkbox size */
 }
 
 /* Style for the submit button */
