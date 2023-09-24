@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fax = $_POST['fax'];
     
     $coName = $_POST['coName'];
-    $coEamil = $_POST['coEamil'];
+    $coEmail = $_POST['coEmail'];
     $coLine = $_POST['coLine'];
 
     $repName = $_POST['repName'];
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dataToSave .= "Recipient Name: $recName\n";
     $dataToSave .= "Tax ID Number: $taxIdNum\n";
     $dataToSave .= "Recipient Address: $recAddress\n";
-    
+
 
     $filename = './db/registration_data.txt';
     

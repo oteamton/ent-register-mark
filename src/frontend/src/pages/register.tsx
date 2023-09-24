@@ -20,6 +20,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, type, value, onChange }) =
 };
 
 function Register() {
+    const [registrationResult, setRegistrationResult] = useState<string | null>(null);
     // Define state variables for all form fields
     const [orgNameth, setOrgNameth] = useState("");
     const [orgNameEn, setOrgNameEn] = useState("");
@@ -54,6 +55,8 @@ function Register() {
     const [recName, setRecName] = useState("");
     const [taxIdNum, setTaxIdNum] = useState("");
     const [recAddress, setRecAddress] = useState("");
+
+    
 
     const handleBoxACheck = () => {
         setTypeA(!typeA);
@@ -147,14 +150,13 @@ function Register() {
         formData.append('recAddress', recAddress);
 
         try {
-            const response = await fetch("http://localhost:8000/register.php", {
-                method: 'POST',
-                body: formData,
-            });
+            const response = await axios.post("http://localhost:8000/register.php", formData);
             if (response.status === 200) {
+                setRegistrationResult("Registration successful!");
                 // Registration successful, redirect to a success page
                 window.location.href = "/success";
             } else {
+                setRegistrationResult("Registration failed.");
                 // Display an error message to the user
                 console.error("Registration failed.");
             }
@@ -241,8 +243,9 @@ function Register() {
                 </div>     
                 <div className="btn-container">
                     <button type="submit">สมัครสมาชิค</button>
-                    <button type="reset">ยกเลิก</button>
+                    <button type="reset" onClick={handleCancel}>ยกเลิก</button>
                 </div>
+                {registrationResult && <p className="registration-result">{registrationResult}</p>}
         
             </form>
         </div>
