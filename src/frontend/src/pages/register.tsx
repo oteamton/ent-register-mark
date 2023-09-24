@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/register.css"
+import axios from "axios";
 
 // Define a function component for the form field
 interface FormFieldProps {
@@ -146,7 +147,7 @@ function Register() {
         formData.append('recAddress', recAddress);
 
         try {
-            const response = await fetch("http://localhost/register.php", {
+            const response = await fetch("http://localhost:8000/register.php", {
                 method: 'POST',
                 body: formData,
             });
