@@ -1,0 +1,156 @@
+Organization Name (TH): 1
+Organization Name (EN): 1
+Address: 1
+Phone: 1
+Fax: 1
+Contact Person: 1
+Contact Email: 
+Contact Line: 1
+Representative Name: 1
+Representative Position: 1
+Representative Agency: 1
+Representative Fax: 1
+Representative Phone: 
+Representative Email: 1
+Representative Line: 1
+Alternate Representative Name: 1
+Alternate Representative Position: 1
+Alternate Representative Agency: 1
+Alternate Representative Fax: 1
+Alternate Representative Phone: 1
+Alternate Representative Email: 1
+Alternate Representative Line: 1
+Type of Registration: 
+Recipient Name: 1
+Tax ID Number: 1
+Recipient Address: 1
+Organization Name (TH): 1
+Organization Name (EN): 1
+Address: 1
+Phone: 1
+Fax: 1
+Contact Person: 1
+Contact Email: 
+Contact Line: 1
+Representative Name: 1
+Representative Position: 1
+Representative Agency: 1
+Representative Fax: 1
+Representative Phone: 
+Representative Email: 1
+Representative Line: 1
+Alternate Representative Name: 1
+Alternate Representative Position: 1
+Alternate Representative Agency: 1
+Alternate Representative Fax: 1
+Alternate Representative Phone: 1
+Alternate Representative Email: 1
+Alternate Representative Line: 1
+Type of Registration: 
+Recipient Name: 1
+Tax ID Number: 1
+Recipient Address: 1
+Organization Name (TH): 1
+Organization Name (EN): 1
+Address: 1
+Phone: 1
+Fax: 1
+Contact Person: 1
+Contact Email: 
+Contact Line: 1
+Representative Name: 1
+Representative Position: 1
+Representative Agency: 1
+Representative Fax: 1
+Representative Phone: 
+Representative Email: 1
+Representative Line: 1
+Alternate Representative Name: 1
+Alternate Representative Position: 1
+Alternate Representative Agency: 1
+Alternate Representative Fax: 1
+Alternate Representative Phone: 1
+Alternate Representative Email: 1
+Alternate Representative Line: 1
+Type of Registration: 
+Recipient Name: 1
+Tax ID Number: 1
+Recipient Address: 1
+Organization Name (TH): qweqwe
+Organization Name (EN): 1
+Address: 1
+Phone: 1
+Fax: 1
+Contact Person: 1
+Contact Email: 
+Contact Line: 1
+Representative Name: 1
+Representative Position: 1
+Representative Agency: 1
+Representative Fax: 1
+Representative Phone: 
+Representative Email: 1
+Representative Line: 1
+Alternate Representative Name: 1
+Alternate Representative Position: 1
+Alternate Representative Agency: 1
+Alternate Representative Fax: 1
+Alternate Representative Phone: 1
+Alternate Representative Email: 1
+Alternate Representative Line: 1
+Type of Registration: 
+Recipient Name: 1
+Tax ID Number: 1
+Recipient Address: 1
+Organization Name (TH): 
+Organization Name (EN): 1
+Address: 1
+Phone: 1
+Fax: 1
+Contact Person: 1
+Contact Email: 
+Contact Line: 1
+Representative Name: 1
+Representative Position: 1
+Representative Agency: 1
+Representative Fax: 1
+Representative Phone: 
+Representative Email: 1
+Representative Line: 1
+Alternate Representative Name: 1
+Alternate Representative Position: 1
+Alternate Representative Agency: 1
+Alternate Representative Fax: 1
+Alternate Representative Phone: 1
+Alternate Representative Email: 1
+Alternate Representative Line: 1
+Type of Registration: สมาชิกแบบที่ 2
+Recipient Name: 1
+Tax ID Number: 1
+Recipient Address: 1
+Organization Name (TH): swu-org
+Organization Name (EN): swu-org
+Address: Bangkok
+Phone: 08888888
+Fax: 08888888
+Contact Person: Ton
+Contact Email: 
+Contact Line: ton
+Representative Name: Ton Ton
+Representative Position: sitdown
+Representative Agency: Erp
+Representative Fax: 08888888
+Representative Phone: 08888888
+Representative Email: Ton@gmail.com
+Representative Line: ton
+Alternate Representative Name: Ton Ton
+Alternate Representative Position: sitdown
+Alternate Representative Agency: 1
+Alternate Representative Fax: 08888888
+Alternate Representative Phone: 08888888
+Alternate Representative Email: Ton@gmail.com
+Alternate Representative Line: Ton
+Type of Registration: สมาชิกแบบที่ 2
+Recipient Name: Ton SWU
+Tax ID Number: 111-111-111
+Recipient Address: Bangkok

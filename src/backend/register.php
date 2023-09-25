@@ -27,8 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $altRepEmail = $_POST['altRepEmail'];
     $altRepLine = $_POST['altRepLine'];
 
-    $typeA = isset($_POST['typeA']) ? $_POST['typeA'] : false;
-    $typeB = isset($_POST['typeB']) ? $_POST['typeB'] : false;
+    if (isset($_POST['typeA'])) {
+        $typeA = 'Type A';
+        $selectedType = 'สมาชิคแบบที่ 1';
+    } else if (isset($_POST['typeB'])) {
+        $typeB = 'Type B';
+        $selectedType = 'สมาชิกแบบที่ 2';
+    }
 
     $recName = $_POST['recName'];
     $taxIdNum = $_POST['taxIdNum'];
@@ -36,10 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
 
     
-    // You can perform validation and database operations here
+    // Validation and database operations here
     
     // Save the data to a text file
-    $dataToSave = "Organization Name (TH): $orgNameth\n";
+    $dataToSave .= "Organization Name (TH): $orgNameth\n";
     $dataToSave .= "Organization Name (EN): $orgNameEn\n";
     $dataToSave .= "Address: $address\n";   
     $dataToSave .= "Phone: $phone\n";
@@ -61,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dataToSave .= "Alternate Representative Phone: $altRepPhone\n";
     $dataToSave .= "Alternate Representative Email: $altRepEmail\n";
     $dataToSave .= "Alternate Representative Line: $altRepLine\n";
-    $dataToSave .= "Type A: $typeA\n";
-    $dataToSave .= "Type B: $typeB\n";
+    $dataToSave .= "Type of Registration: $selectedType\n"; 
     $dataToSave .= "Recipient Name: $recName\n";
     $dataToSave .= "Tax ID Number: $taxIdNum\n";
     $dataToSave .= "Recipient Address: $recAddress\n";
