@@ -2,30 +2,34 @@ import React, { useState, useRef } from "react";
 import "../styles/register1.css"
 import axios from "axios";
 
+
 // Define a function component for the form field
 interface FormFieldProps {
     label: string;
     type: string;
     value: string;
+    readOnly?: boolean;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   }
 
-const FormField: React.FC<FormFieldProps> = ({ label, type, value, onChange }) => {
+const FormField: React.FC<FormFieldProps> = ({ label, type, value, readOnly, onChange }) => {
+    const [inputReadOnly, setInputReadOnly] = useState(readOnly || false);
     return (
         <div>
         <label>{label}:</label>
-        <input type={type} value={value} onChange={onChange} />
+        <input type={type} value={value} readOnly={inputReadOnly} onChange={onChange} />
         </div>
     );
 };
 
 function Register() {
     const orgFormRef = useRef<HTMLDivElement>(null);
-    const coFormRef = useRef<HTMLDivElement>(null);
+    const contFormRef = useRef<HTMLDivElement>(null);
     const repFormRef = useRef<HTMLDivElement>(null);
     const altRepFormRef = useRef<HTMLDivElement>(null);
     const typeFormRef = useRef<HTMLDivElement>(null);
     const paymFormRef = useRef<HTMLDivElement>(null);
+
     // Define state variables for registration
     const [registrationResult, setRegistrationResult] = useState<string | null>(null);
     const [activeForm, setActiveForm] = useState<string | null>(null);
@@ -35,10 +39,10 @@ function Register() {
     const [address, setAddress] = useState("");
     const [phone, setPhone] = useState("");
     const [fax, setFax] = useState("");
-    // Coordinator
-    const [coName, setCoName] = useState("");
-    const [coEmail, setCoEmail] = useState("");
-    const [coLine, setCoLine] = useState("");
+    // Contractor
+    const [contName, setContName] = useState("");
+    const [contEmail, setContEmail] = useState("");
+    const [contLine, setContLine] = useState("");
     // Organization representative
     const [repName, setRepName] = useState("");
     const [repPosition, setRepPosition] = useState("");
@@ -64,13 +68,27 @@ function Register() {
     const [taxIdNum, setTaxIdNum] = useState("");
     const [recAddress, setRecAddress] = useState("");
 
-    const handleButtonClick = (formName: string, formRef:React.RefObject<HTMLDivElement>) => {
-        if (formRef.current) {
-        formRef.current.scrollIntoView({ behavior: 'smooth' });
-        setActiveForm(formName);
-        }
+    const isThaiOnly = (inputValue:string) => {
+        const thaiRegex = /^[ก-๏\s]*$/;
+        return thaiRegex.test(inputValue);
+      };
+    const isEmpty = (inputValue: string) => {
+        return inputValue.trim() === "";
     };
 
+    const handleButtonClick = (formName: string, formRef:React.RefObject<HTMLDivElement>) => {
+        if (activeForm === formName) {
+            return;
+        }
+        setActiveForm(formName);
+        const form = formRef.current;
+        form?.classList.add("active-form");
+        const otherForms = document.querySelectorAll(".active-form");
+        otherForms.forEach((form) => {
+            form.classList.remove("active-form");
+        })
+    };
+    
     const handleFormClick = (formName:string) => {
         setActiveForm(formName);
       };
@@ -104,9 +122,9 @@ function Register() {
         setAddress("");
         setPhone("");
         setFax("");
-        setCoName("");
-        setCoEmail("");
-        setCoLine("");
+        setContName("");
+        setContEmail("");
+        setContLine("");
         setRepName("");
         setRepPosition("");
         setRepAgency("");
@@ -140,9 +158,9 @@ function Register() {
         formData.append('phone', phone);
         formData.append('fax', fax);
         // Coordinator
-        formData.append('coName', coName);
-        formData.append('coEmail', coEmail);
-        formData.append('coLine', coLine);
+        formData.append('contName', contName);
+        formData.append('contEmail', contEmail);
+        formData.append('contLine', contLine);
         // Organization representative
         formData.append('repName', repName);
         formData.append('repPosition', repPosition);
@@ -172,7 +190,7 @@ function Register() {
         formData.append('recAddress', recAddress);
 
         try {
-            const response = await axios.post("http://localhost:8000/reg.csv.php", formData);
+            const response = await axios.post("http://10.30.97.126:8080/reg.csv.php", formData);
             if (response.status === 200) {
                 setRegistrationResult("Registration successful!");
                 // Registration successful, redirect to a success page
@@ -180,9 +198,11 @@ function Register() {
             } else if (response.status === 400) {
                 setRegistrationResult("Registration failed.");
                 // Display an error message to the user
+                window.location.href = "/failed";
                 console.error("Registration failed.");
             }
         } catch (error) {
+            window.location.href = "/failed";
             console.error("Error:", error);
         }
     }
@@ -190,32 +210,44 @@ function Register() {
     return (
         <div>
             <div className="tabs">
-            <button onClick={() => handleButtonClick('org-form', orgFormRef)}>องค์กร</button>
-            <button onClick={() => handleButtonClick('co-form', coFormRef)}>ผู้แทนองค์กร</button>
-            <button onClick={() => handleButtonClick('rep-form', repFormRef)}>ผู้สำรององค์กร</button>
-            <button onClick={() => handleButtonClick('alt-rep-form', altRepFormRef)}>ผู้สำรองผู้แทนองค์กร</button>
-            <button onClick={() => handleButtonClick('type-form', typeFormRef)}>ประเภทการเป็นสมาชิค</button>
-            <button onClick={() => handleButtonClick('paym-form', paymFormRef)}>การชำระเงิน</button>
+                <button className="tabs-nav" onClick={() => handleButtonClick('org-form', orgFormRef)}>องค์กร</button>
+                {/* <button className="tabs-nav" onClick={() => handleButtonClick('cont-form', contFormRef)}>ข้อมูลการติดต่อ</button> */}
+                <button className="tabs-nav" onClick={() => handleButtonClick('rep-form', repFormRef)}>ผู้สำรององค์กร</button>
+                <button className="tabs-nav" onClick={() => handleButtonClick('alt-rep-form', altRepFormRef)}>ผู้สำรองผู้แทนองค์กร</button>
+                <button className="tabs-nav" onClick={() => handleButtonClick('type-form', typeFormRef)}>ประเภทการเป็นสมาชิค</button>
+                <button className="tabs-nav" onClick={() => handleButtonClick('paym-form', paymFormRef)}>การชำระเงิน</button>
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="form">
-                    <div ref={orgFormRef} className={`org-form ${activeForm === 'org-form' ? 'active-form' : ''}`} onClick={() => handleFormClick('org-form')}>
+                    <div ref={orgFormRef} className={`org-form ${activeForm === 'org-form' ? 'active-form' : ''}`}>
                         <p>องค์กร</p>
                         {/* Organization */}
-                        <FormField label="ชื่อองค์กรภาษาไทย" type="text" value={orgNameth} onChange={(e) => setOrgNameth(e.target.value)} />
+                        <FormField label="ชื่อองค์กรภาษาไทย" type="text" value={orgNameth} onChange={(e) =>{ const inputValue = e.target.value;
+                            // Perform validation here
+                            if (isEmpty(inputValue)) {
+                                e.target.classList.add("input-error");
+                            }
+                            else if (isThaiOnly(inputValue)) {
+                            // Valid input
+                            e.target.classList.remove("input-error");
+                            setOrgNameth(inputValue);
+                            } else {
+                            // Invalid input, you can show an error message or take appropriate action
+                            console.log("Invalid input. Please enter Thai characters only.");}}}
+                        /> 
                         <FormField label="ชื่อองค์กรภาษาอังกฤษ" type="text" value={orgNameEn} onChange={(e) => setOrgNameEn(e.target.value)} />
                         <FormField label="ที่อยู่หน่วยงาน" type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
                         <FormField label="โทรศัพท์" type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
                         <FormField label="แฟกซ์" type="text" value={fax} onChange={(e) => setFax(e.target.value)} />
                     </div>
-                    <div ref={coFormRef} className={`co-form ${activeForm === 'co-form' ? 'active-form' : ''}`} onClick={() => handleFormClick('co-form')}>
-                        <p>ผู้แทนองค์กร</p>
-                        {/* Coordinator */}
-                        <FormField label="ชื่อผู้ประสานงาน" type="text" value={coName} onChange={(e) => setCoName(e.target.value)} />
-                        <FormField label="อีเมล" type="text" value={coEmail} onChange={(e) => setCoEmail(e.target.value)} />
-                        <FormField label="Line" type="text" value={coLine} onChange={(e) => setCoLine(e.target.value)} />
+                    <div ref={contFormRef} className={`cont-form ${activeForm === 'org-form' ? 'active-form' : ''}`}>
+                        <p>ข้อมูลการติดต่อ</p>
+                        {/* Contractor */}
+                        <FormField label="ชื่อผู้ประสานงาน" type="text" value={contName} onChange={(e) => setContName(e.target.value)} />
+                        <FormField label="อีเมล" type="email" value={contEmail} onChange={(e) => setContEmail(e.target.value)} />
+                        <FormField label="Line" type="text" value={contLine} onChange={(e) => setContLine(e.target.value)} />
                     </div>
-                    <div ref={repFormRef} className={`rep-form ${activeForm === 'rep-form' ? 'active-form' : ''}`} onClick={() => handleFormClick('rep-form')}>
+                    <div ref={repFormRef} className={`rep-form ${activeForm === 'rep-form' ? 'active-form' : ''}`}>
                         <p>ผู้สำรององค์กร</p>
                         {/* Organization representative */}
                         <FormField label="ชื่อและนามสกุล" type="text" value={repName} onChange={(e) => setRepName(e.target.value)} />
@@ -223,10 +255,10 @@ function Register() {
                         <FormField label="หน่วยงาน" type="text" value={repAgency} onChange={(e) => setRepAgency(e.target.value)} />
                         <FormField label="โทรศัพท์" type="text" value={repPhone} onChange={(e) => setRepPhone(e.target.value)} />
                         <FormField label="แฟกซ์" type="text" value={repFax} onChange={(e) => setRepFax(e.target.value)} />
-                        <FormField label="อีเมล" type="text" value={repEmail} onChange={(e) => setRepEmail(e.target.value)} />
+                        <FormField label="อีเมล" type="email" value={repEmail} onChange={(e) => setRepEmail(e.target.value)} />
                         <FormField label="Line" type="text" value={repLine} onChange={(e) => setRepLine(e.target.value)} />
                     </div>
-                    <div ref={altRepFormRef} className={`alt-rep-form ${activeForm === 'alt-rep-form' ? 'active-form' : ''}`} onClick={() => handleFormClick('alt-rep-form')}>
+                    <div ref={altRepFormRef} className={`alt-rep-form ${activeForm === 'alt-rep-form' ? 'active-form' : ''}`}>
                         <p>ผู้สำรองผู้แทนองค์กร</p>
                         {/* Alternate representative */}
                         <FormField label="ชื่อและนามสกุล" type="text" value={altRepName} onChange={(e) => setAltRepName(e.target.value)} />
@@ -234,16 +266,17 @@ function Register() {
                         <FormField label="หน่วยงาน" type="text" value={altRepAgency} onChange={(e) => setAltRepAgency(e.target.value)} />
                         <FormField label="โทรศัพท์" type="text" value={altRepPhone} onChange={(e) => setAltRepPhone(e.target.value)} />
                         <FormField label="แฟกซ์" type="text" value={altRepFax} onChange={(e) => setAltRepFax(e.target.value)} />
-                        <FormField label="อีเมล" type="text" value={altRepEmail} onChange={(e) => setAltRepEmail(e.target.value)} />
+                        <FormField label="อีเมล" type="email" value={altRepEmail} onChange={(e) => setAltRepEmail(e.target.value)} />
                         <FormField label="Line" type="text" value={altRepLine} onChange={(e) => setAltRepLine(e.target.value)} />
                     </div>
-                    <div ref={typeFormRef} className={`type-form ${activeForm === 'type-form' ? 'active-form' : ''}`} onClick={() => handleFormClick('type-form')}>
+                    <div ref={typeFormRef} className={`type-form ${activeForm === 'type-form' ? 'active-form' : ''}`}>
                         <p>ประเภทการเป็นสมาชิค</p>
                         {/* Types of Registration */}
-                        <FormField
+                        <FormField 
                             label="ประเภทการลงทะเบียน"
                             type="text"
                             value={selectedType}
+                            readOnly={true}
                             onChange={(e) => setSelectedType(e.target.value)}
                         />
                         <div className="checkbox-container">
