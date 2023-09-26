@@ -13,7 +13,7 @@ html {
 
 .tabs {
   display: flex; /* Use flexbox layout for the buttons */
-  justify-content: center!;
+  justify-content: center;
   z-index: 1;
   top: 0;
   text-wrap: nowrap;
@@ -25,9 +25,6 @@ html {
   background-color: #013274!important;
   color: #ffffff!important;
   text-align: center;
-  width: 92%; /* Buttons take full width */
-  border: none;
-  cursor: pointer;
 }
 
 /* Form */
@@ -39,9 +36,11 @@ html {
   border: 1px solid #ccc;
 }
 .form div{
-  display: inline-block;
-  width: fit-content;
-  margin: 10px;
+  display: inline-flex;
+  width: 100%;
+  /* margin: 10px; */
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 /* Styles for .FormField label */
 .FormField label {
@@ -63,7 +62,7 @@ html {
   margin-bottom: 20px; /* Add spacing between form sections */
   width: fit-content; /* Ensure the box takes the full width of its container */
   box-sizing: border-box; /* Include padding and border within the width */
-  overflow: hidden; /* Ensure content doesn't overflow */
+  overflow: hidden; 
   text-align: start;
 }
 .org-form div, .org-form div, .cont-form div, .rep-form div, .alt-rep-form div, .type-form div, .paym-form div{

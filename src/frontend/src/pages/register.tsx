@@ -212,9 +212,9 @@ function Register() {
             <div className="tabs">
                 <button className="tabs-nav" onClick={() => handleButtonClick('org-form', orgFormRef)}>องค์กร</button>
                 {/* <button className="tabs-nav" onClick={() => handleButtonClick('cont-form', contFormRef)}>ข้อมูลการติดต่อ</button> */}
-                <button className="tabs-nav" onClick={() => handleButtonClick('rep-form', repFormRef)}>ผู้สำรององค์กร</button>
+                {/* <button className="tabs-nav" onClick={() => handleButtonClick('rep-form', repFormRef)}>ผู้สำรององค์กร</button>
                 <button className="tabs-nav" onClick={() => handleButtonClick('alt-rep-form', altRepFormRef)}>ผู้สำรองผู้แทนองค์กร</button>
-                <button className="tabs-nav" onClick={() => handleButtonClick('type-form', typeFormRef)}>ประเภทการเป็นสมาชิค</button>
+                <button className="tabs-nav" onClick={() => handleButtonClick('type-form', typeFormRef)}>ประเภทการเป็นสมาชิค</button> */}
                 <button className="tabs-nav" onClick={() => handleButtonClick('paym-form', paymFormRef)}>การชำระเงิน</button>
             </div>
             <form onSubmit={handleSubmit}>
@@ -223,17 +223,23 @@ function Register() {
                         <p>องค์กร</p>
                         {/* Organization */}
                         <FormField label="ชื่อองค์กรภาษาไทย" type="text" value={orgNameth} onChange={(e) =>{ const inputValue = e.target.value;
-                            // Perform validation here
-                            if (isEmpty(inputValue)) {
-                                e.target.classList.add("input-error");
-                            }
-                            else if (isThaiOnly(inputValue)) {
-                            // Valid input
-                            e.target.classList.remove("input-error");
+                            const isValidThai = isThaiOnly(inputValue);
                             setOrgNameth(inputValue);
-                            } else {
-                            // Invalid input, you can show an error message or take appropriate action
-                            console.log("Invalid input. Please enter Thai characters only.");}}}
+
+                             e.target.classList.remove("input-error");
+                            // Perform validation 
+                            if (isEmpty(inputValue)) {
+                                // Input is empty, mark as invalid
+                                e.target.classList.add("input-error");
+                                console.log("Input cannot be empty.");
+                              } else if (!isValidThai) {
+                                // Invalid input, mark as invalid
+                                e.target.classList.add("input-error");
+                                console.log("Invalid input. Please enter Thai characters only.");
+                              } else {
+                                // Clear error styles if input is valid
+                                e.target.classList.remove("input-error");
+                              }}}
                         /> 
                         <FormField label="ชื่อองค์กรภาษาอังกฤษ" type="text" value={orgNameEn} onChange={(e) => setOrgNameEn(e.target.value)} />
                         <FormField label="ที่อยู่หน่วยงาน" type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
@@ -247,7 +253,7 @@ function Register() {
                         <FormField label="อีเมล" type="email" value={contEmail} onChange={(e) => setContEmail(e.target.value)} />
                         <FormField label="Line" type="text" value={contLine} onChange={(e) => setContLine(e.target.value)} />
                     </div>
-                    <div ref={repFormRef} className={`rep-form ${activeForm === 'rep-form' ? 'active-form' : ''}`}>
+                    <div ref={repFormRef} className={`rep-form ${activeForm === 'org-form' ? 'active-form' : ''}`}>
                         <p>ผู้สำรององค์กร</p>
                         {/* Organization representative */}
                         <FormField label="ชื่อและนามสกุล" type="text" value={repName} onChange={(e) => setRepName(e.target.value)} />
@@ -258,7 +264,7 @@ function Register() {
                         <FormField label="อีเมล" type="email" value={repEmail} onChange={(e) => setRepEmail(e.target.value)} />
                         <FormField label="Line" type="text" value={repLine} onChange={(e) => setRepLine(e.target.value)} />
                     </div>
-                    <div ref={altRepFormRef} className={`alt-rep-form ${activeForm === 'alt-rep-form' ? 'active-form' : ''}`}>
+                    <div ref={altRepFormRef} className={`alt-rep-form ${activeForm === 'org-form' ? 'active-form' : ''}`}>
                         <p>ผู้สำรองผู้แทนองค์กร</p>
                         {/* Alternate representative */}
                         <FormField label="ชื่อและนามสกุล" type="text" value={altRepName} onChange={(e) => setAltRepName(e.target.value)} />
@@ -269,7 +275,7 @@ function Register() {
                         <FormField label="อีเมล" type="email" value={altRepEmail} onChange={(e) => setAltRepEmail(e.target.value)} />
                         <FormField label="Line" type="text" value={altRepLine} onChange={(e) => setAltRepLine(e.target.value)} />
                     </div>
-                    <div ref={typeFormRef} className={`type-form ${activeForm === 'type-form' ? 'active-form' : ''}`}>
+                    <div ref={typeFormRef} className={`type-form ${activeForm === 'paym-form' ? 'active-form' : ''}`}>
                         <p>ประเภทการเป็นสมาชิค</p>
                         {/* Types of Registration */}
                         <FormField 
