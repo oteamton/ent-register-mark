@@ -2,14 +2,6 @@
   font-family: 'Kanit';
   src: url('../../public/fonts/Kanit/Kanit-Light.ttf') format('truetype');
 }
-html {
-  scroll-behavior: smooth;
-  scroll-snap-coordinate: 0% 100%;
-  scroll-snap-destination: 0% 100%;
-  scroll-snap-points-y: repeat(100%);
-  scroll-snap-type: y mandatory;
-  scroll-snap-stop: always;
-}
 
 .tabs {
   display: flex; /* Use flexbox layout for the buttons */
@@ -22,9 +14,22 @@ html {
   background-color: #fff; 
 }
 .tabs button {
-  background-color: #013274!important;
-  color: #ffffff!important;
+  border-radius: 4px; /* Add border radius */
+  background-color: #888E75;
+  border: none;
+  cursor: pointer;
+  color: whitesmoke;
+  font-family: 'Kanit', sans-serif;
+  font-size: 16px;
+  margin: 10px;
+  padding: 10px 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transitions for 3D effect and box shadow */
   text-align: center;
+  min-width: 150px;
+}
+.active-button{
+  background-color: #013274!important;
+  color: rgb(0, 255, 0)!important;
 }
 
 /* Form */
@@ -36,11 +41,8 @@ html {
   border: 1px solid #ccc;
 }
 .form div{
-  display: inline-flex;
   width: 100%;
   /* margin: 10px; */
-  flex-wrap: wrap;
-  flex-direction: column;
 }
 /* Styles for .FormField label */
 .FormField label {
@@ -49,9 +51,11 @@ html {
 }
 /* Styles for .FormField input */
 .FormField input {
-  width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+}
+input:focus{
+  outline: none;
+  box-shadow: 0 0 5px #013274;
 }
 .org-form, .cont-form, .rep-form, .alt-rep-form, .type-form, .paym-form{
   position: relative;
@@ -65,14 +69,36 @@ html {
   overflow: hidden; 
   text-align: start;
 }
-.org-form div, .org-form div, .cont-form div, .rep-form div, .alt-rep-form div, .type-form div, .paym-form div{
+.org-form div, .cont-form div, .rep-form div, .alt-rep-form div, .type-form div, .paym-form div{
   margin: 5px;
 }
+.org-form > div, .cont-form > div, .rep-form > div, .alt-rep-form > div{
+  display: flex;
+  flex-direction: row;
+}
+.org-form > div > div:nth-child(odd) {
+  flex-basis: 50%;
+}
+.org-form > div > div:nth-child(even) {
+  flex-basis: 50%;
+}
+.org-form > div > div:nth-child(3) {
+  flex-basis: 100%;
+}
 .org-form div input, .cont-form div input, .rep-form div input, .alt-rep-form div input, .type-form div input, .paym-form div input{
+  border: #00d0ff 1px solid;
+  border-radius: 50px;
   font-family: 'Kanit', sans-serif;
   font-size: 16px;
   margin-left: 5px;
+  min-height: 30px;
+  padding: 0 20px 0 0;
   resize: horizontal!important;
+  text-indent: 10px;
+  min-width: 300px;
+}
+.org-form div input.input-error, .cont-form div input.input-error, .rep-form div input.input-error, .alt-rep-form div input.input-error, .type-form div input.input-error, .paym-form div input.input-error{
+  border: 2px solid red;
 }
 .org-form p, .cont-form p, .rep-form p, .alt-rep-form p, .type-form p, .paym-form p{
   position: relative;
@@ -86,6 +112,10 @@ html {
 .type-form .checkbox-container {
   margin-top: 5px;
   text-align: center;
+}
+.checkbox{
+  flex-direction: row!important;
+  justify-content: space-evenly;
 }
 /* Active form styles */
 .active-form {
@@ -109,15 +139,12 @@ html {
 { 
   display: none;
 }
-.org-form div input.input-error {
-  border: 2px solid red;
-}
 
 /* Styles for .btn-container */
 .btn-container {
   text-align: center;
 }
-.btn-container button, .tabs button {
+.btn-container button{
   font-family: 'Kanit', sans-serif;
   font-size: 16px;
   margin: 10px;
@@ -144,11 +171,18 @@ html {
 
 /* Responsive styles for buttons */
 @media (max-width: 768px) {
-.btn-container, .tabs {
+.btn-container {
   flex-direction: column; /* Stack buttons vertically on smaller screens */
   }
 .btn-container button {
-  width: 100%; /* Full width for buttons on smaller screens */
+  width: 50%; /* Full width for buttons on smaller screens */
+  }
+}
+@media (max-width: 768px){
+  .tabs{
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
   }
 }
 @media screen and (max-width: 768px) {
