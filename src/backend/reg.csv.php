@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $fax = $_POST['fax'];
     
-    $coName = $_POST['coName'];
-    $coEmail = $_POST['coEmail'];
-    $coLine = $_POST['coLine'];
+    $contName = $_POST['contName'];
+    $contEmail = $_POST['contEmail'];
+    $contLine = $_POST['contLine'];
 
     $repName = $_POST['repName'];
     $repPosition = $_POST['repPosition'];
@@ -40,15 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $altRepEmail = $_POST['altRepEmail'];
     $altRepLine = $_POST['altRepLine'];
 
-    // $selectedType = '';
-    // if (isset($_POST['typeA'])) {
-    //     $typeA = 'Type A';
-    //     $selectedType = 'สมาชิคแบบที่ 1';
-    // } else if (isset($_POST['typeB'])) {
-    //     $typeB = 'Type B';
-    //     $selectedType = 'สมาชิกแบบที่ 2';
-    // }
-
     $recName = $_POST['recName'];
     $taxIdNum = $_POST['taxIdNum'];
     $recAddress = $_POST['recAddress'];
@@ -61,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectedType = "";  // Set a default value if neither typeA nor typeB is set
     }
 
-    $formData = array($orgNameth, $orgNameEn, $address, $phone, $fax, $coName,
-    $coEmail, $coLine,
+    $formData = array($orgNameth, $orgNameEn, $address, $phone, $fax, $contName,
+    $contEmail, $contLine,
     $repName, $repPosition, $repAgency, $repFax, $repPhone, $repEmail, $repLine,
     $altRepName, $altRepPosition, $altRepAgency, $altRepFax, $altRepPhone, $altRepEmail, $altRepLine,
     $selectedType,
@@ -105,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->Port = 587;
 
         //Recipients
-        $mail->setFrom($coEmail, $name);
+        $mail->setFrom($contEmail, $contName);
         $mail->addAddress($recipient);
 
         // Attach file

@@ -127,7 +127,7 @@ input:focus, .cont-form input:focus, .rep-form input:focus, .alt-rep-form input:
 
 /* Active form styles */
 .active-form {
-  display: flexbox;
+  display: block;
 }
 .org-form:not(.active-form),
 .cont-form:not(.active-form),.rep-form:not(.active-form), .alt-rep-form:not(.active-form), .type-form:not(.active-form), 

@@ -29,8 +29,8 @@ function Register() {
     const [canProceed, setCanProceed] = useState<boolean>(false);
     // Define state variables for registration
     const [registrationResult, setRegistrationResult] = useState<string | null>(null);
-    const [activeForm, setActiveForm] = useState<string | null>(null);
-    const [activeBtn, setActiveBtn] = useState<string | null>(null);
+    const [activeForm, setActiveForm] = useState<string | null>('first-form');
+    const [activeBtn, setActiveBtn] = useState<string | null>('first-form');
     // Define state variables for all form fields
     const [orgNameth, setOrgNameth] = useState("");
     const [orgNameEn, setOrgNameEn] = useState("");
