@@ -1,119 +1,224 @@
-/* Background styling for the entire page */
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh; /* 100% of the viewport height */
-  font-family: "Noto Sans Thai", "Mitr", "Sarabun", "Pridi", sans-serif;
-  /* overflow: hidden; Hide overflow for the background */
-  background-color: #E1EEF9; /* Light blue */
-  background-image: linear-gradient(to bottom, #E1EEF9, #EAEFF3, #F2F7FA);
-  background-repeat: no-repeat; /* Prevent background from repeating */
-  background-attachment: fixed; /* Keep the background fixed while scrolling */
-  background-size: cover;
+@font-face {
+  font-family: "Kanit";
+  src: url("../../public/fonts/Kanit/Kanit-Light.ttf") format("truetype");
 }
 
-/* Random shapes in the background */
-.random-shape {
-  position: absolute;
-  width: 20px; /* Adjust the size of the shapes as needed */
-  height: 20px;
-  background-color: #444; /* Random shape color */
-  border-radius: 50%; /* Makes shapes round (can be changed to other shapes if desired) */
-  /* opacity: 1; Adjust the opacity of the shapes */
-}
-
-/* Apply animation to the random shapes for movement */
-.random-shape:nth-child(1) {
-  left: 10%; /* Adjust position as needed */
-  top: 10%;
-  animation: moveRandom 5s linear infinite;
-}
-
-.random-shape:nth-child(2) {
-  left: 20%; /* Adjust position as needed */
-  top: 30%;
-  animation: moveRandom 4s linear infinite;
-}
-
-/* Add more random shapes with different positions and animation durations as needed */
-
-@keyframes moveRandom {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  100% {
-    transform: translateY(-500px) rotate(360deg);
-  }
-}
-
-/* */
-.form {
+.tabs {
   display: flex;
-  flex-wrap: wrap;
-  font-family: "Noto Sans Thai", sans-serif;
   justify-content: center;
-  align-items: top;
-  margin: 20px; /* Add some margin for spacing */
+  z-index: 1;
+  top: 0;
+  text-wrap: nowrap;
+  width: 100%;
+  max-height: auto;
+  background-color: #fff;
 }
 
-.org-form, .co-form, .rep-form, .alt-rep-form, .type-form, .paym-form {
-  /* display: block; */
-  padding: 15px; /* Increased padding for better spacing */
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft box shadow */
-  background: rgba(1, 50, 116, 0.5);
-  /* background-color: #ffffff; White background */
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add transition for hover effect on both transform and box-shadow */
-  text-align: end;
-  margin: 10px;
-  position: relative; /* Required for the shadow on hover */
-}
-
-.org-form:hover, .co-form:hover, .rep-form:hover, .alt-rep-form:hover, .type-form:hover, .paym-form:hover {
-  transform: scale(1.05); /* Increase size on hover */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Increase shadow intensity on hover */
-}
-
-input{
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 5px;
-  font-size: 16px;
-  width: 100vh;
-}
-
-label{
-  font-weight: 500;
-  text-align: left;
-  padding: 5px;
-}
-
-.checkbox-container .checkbox-label {
-  display: flex;
-  justify-content: flex-start!important;
-  /* gap: 10px; Adjust the gap as needed */
-}
-
-/* Specific selector to target the checkbox inputs within type-form */
-.type-form .checkbox-container .checkbox-input {
-  /* margin-right: 5px; */
-  cursor: pointer;
-  transform: scale(1.2); /* Adjust the scale for checkbox size */
-}
-
-/* Style for the submit button */
-button[type="submit"], [type="reset"] {
-  background-color: #007BFF; /* Change the background color to blue */
-  color: white;
-  padding: 10px 20px;
+.tabs button {
+  background-color: #888e75;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
+  color: whitesmoke;
+  font-family: "Kanit";
+  font-size: 16px;
+  padding: 10px 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  min-width: 150px;
+}
+.tabs-nav-first {
+  border-radius: 50px 0 0 50px;
+}
+.tabs-nav-end {
+  border-radius: 0 50px 50px 0;
+}
+.active-button {
+  background-color: #013274 !important;
+  color: rgb(0, 255, 0) !important;
+}
+
+/* Form */
+.form {
+  display: -ms-flexbox;
+  height: 100vh;
+  font-size: 16px;
+  font-family: "Kanit", sans-serif;
+  background-color: #ffffff;
+  padding: 10px 200px 0 200px;
+}
+
+.org-form input:focus,
+.cont-form input:focus,
+.rep-form input:focus,
+.alt-rep-form input:focus,
+.type-form input:focus,
+.paym-form input:focus {
+  outline: none;
+  box-shadow: 0 0 5px #013274;
+}
+
+.org-form,
+.cont-form,
+.rep-form,
+.alt-rep-form,
+.type-form,
+.paym-form {
+  background-color: #fff;
+  padding: 20px 40px 20px 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  box-shadow: #013274 0px 0px 10px;
+}
+
+.org-form div,
+.cont-form div,
+.rep-form div,
+.alt-rep-form div,
+.paym-form div {
   margin: 10px;
 }
 
-.btn-container{
+.input-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+label {
+  flex: 1;
+  /* Label takes up 1/3 of the available space */
+  text-align: start;
+  /* Align label to the start */
+  overflow: hidden;
+}
+
+input {
+  flex: 2;
+  min-width: 50px;
+  max-width: 300px;
+  min-height: 30px;
+  border: #00d0ff 1px solid;
+  border-radius: 50px;
+  font-family: "Kanit", sans-serif;
+  font-size: 16px;
+  text-indent: 18px;
+  text-align: start;
+}
+
+.org-form div input.input-error,
+.cont-form div input.input-error,
+.rep-form div input.input-error,
+.alt-rep-form div input.input-error,
+.paym-form div input.input-error {
+  border: 2px solid red !important;
+}
+
+.org-form p,
+.cont-form p,
+.rep-form p,
+.alt-rep-form p,
+.type-form p,
+.paym-form p {
+  position: relative;
+  padding: 5px 0 0 0;
+  margin: 0px;
+  top: -20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.org-form:not(.active-form),
+.cont-form:not(.active-form),
+.rep-form:not(.active-form),
+.alt-rep-form:not(.active-form),
+.type-form:not(.active-form),
+.paym-form:not(.active-form) {
+  display: none;
+}
+
+/* Button styles */
+.btn-container {
+  text-align: center;
+}
+
+.btn-container button {
+  font-family: "Kanit", sans-serif;
+  font-size: 16px;
+  /* margin: 10px; */
+  padding: 10px 20px;
+  background-color: #00d0ff;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Add transitions for 3D effect and box shadow */
+  border-radius: 6px;
+}
+
+/* Hover effect */
+.btn-container button:hover {
+  transform: perspective(1000px) rotateY(10deg) scale(1.05);
+  /* transition: transform 0.3s ease; */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  color: #6ec1e4;
+}
+
+/* After-click */
+.btn-container button:active {
+  transform: perspective(1000px) scale(0.95);
+  box-shadow: none;
+}
+
+/* Responsive styles for buttons */
+@media (max-width: 768px) {
+  .btn-container {
+    flex-direction: column;
+    /* Stack buttons vertically on smaller screens */
+  }
+
+  .btn-container button {
+    width: 50%;
+    /* Full width for buttons on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .tabs {
+    width: 100%;
+    /* Make it full-width on smaller screens */
+    max-width: 100%;
+    /* Ensure it doesn't exceed the viewport width */
+    height: auto;
+    /* Allow content to determine height */
+  }
+}
+
+/* Styles for .registration-result */
+.registration-result {
+  text-align: center;
 }

@@ -17,54 +17,78 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <style>
       .alphabet {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         font-family: sans-serif;
         font-size: 20px;
         color: black;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .alphabet span {
+        width: 8ch;
+        height: 8ch;
+        border: 1px solid black;
+        text-align: center;
+        line-height: 8ch;
+      }
+
+      .alphabet span:after {
+        content: "";
         position: absolute;
-        width: 100vw;
-        height: 100vh;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
       }
     </style>
     <title>สมัครสมาชิก - Engagement Thailand</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
+      <noscript>You need to enable JavaScript to run this app.</noscript>
+
       <script>
         function generateAlphabet() {
           // Generate a random color
-          var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+          var color = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
           // Generate a random alphabet
           var alphabet = Math.floor(Math.random() * 26) + 65;
-    
+
           // Create a new HTML element for the alphabet
-          var alphabetElement = document.createElement('span');
-    
+          var alphabetElement = document.createElement("span");
+
           // Set the text of the alphabet element
           alphabetElement.textContent = String.fromCharCode(alphabet);
-    
+
           // Add the `.alphabet` class to the alphabet element
-          alphabetElement.classList.add('alphabet');
+          alphabetElement.classList.add("alphabet");
 
           // Set the color of the alphabet element
           alphabetElement.style.color = color;
-    
+
           // Append the alphabet element to the HTML document
           document.body.appendChild(alphabetElement);
-    
+
           // Animate the alphabet element
           // alphabetElement.style.position = 'fixed';
-          alphabetElement.style.top = Math.random() * window.innerHeight + '%';
-          alphabetElement.style.left = Math.random() * window.innerWidth + '%';
-    
+          alphabetElement.style.position = 'absolute';
+          alphabetElement.style.top = Math.random() * window.innerHeight + "px";
+          alphabetElement.style.left = Math.random() * window.innerWidth + "px";
+
           return alphabetElement;
         }
-    
+
         // Generate a new alphabet every second
-        // setInterval(generateAlphabet, 1000);
+        setInterval(generateAlphabet, 1000);
       </script>
     </div>
-
   </body>
 </html>

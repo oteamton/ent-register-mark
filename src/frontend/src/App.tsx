@@ -1,5 +1,5 @@
 import Register from './pages/register';
-// import './App.css';
+import './App.css';
 function App() {
   return (
     <div className='App'>

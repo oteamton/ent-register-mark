@@ -17,17 +17,17 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     // output data of each row
-    while($row = $result->fetch_assoc()) {
-        echo "PROVINCE_ID: " . $row["PROVINCE_ID"]. "<br>";
-        echo "PROVINCE_CODE: " . $row["PROVINCE_CODE"]. "<br>";
-        echo "PROVINCE_NAME: " . $row["PROVINCE_NAME"]. "<br>";
-        echo "GEO_ID: " . $row["GEO_ID"]. "<br>";
-        echo "PROVINCE_CODE1: " . $row["PROVINCE_CODE1"]. "<br>";
+    while ($row = $result->fetch_assoc()) {
+        echo "PROVINCE_ID: " . $row["PROVINCE_ID"] . "<br>";
+        echo "PROVINCE_CODE: " . $row["PROVINCE_CODE"] . "<br>";
+        echo "PROVINCE_NAME: " . $row["PROVINCE_NAME"] . "<br>";
+        echo "GEO_ID: " . $row["GEO_ID"] . "<br>";
+        echo "PROVINCE_CODE1: " . $row["PROVINCE_CODE1"] . "<br>";
         echo "<hr>";
     }
-    } else {
-        echo "0 results";
-    }
+} else {
+    echo "0 results";
+}
 // Close the database connection
 $conn->close();
 ?>
