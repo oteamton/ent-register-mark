@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import "../styles/register.css";
+import "../styles/form.css";
 import axios from "axios";
 
 // Define a function component for the form field
@@ -33,7 +33,7 @@ const FormField: React.FC<FormFieldProps> = ({
   );
 };
 
-function Register() {
+function FormOrga() {
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
@@ -241,7 +241,7 @@ function Register() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/reg.csv.php",
+        "http://localhost:8000/form.php",
         formData
       );
       if (response.status === 200) {
@@ -957,4 +957,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default FormOrga;

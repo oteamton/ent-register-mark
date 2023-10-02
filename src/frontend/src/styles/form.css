@@ -18,13 +18,15 @@
   background-color: #888e75;
   border: none;
   cursor: pointer;
-  color: whitesmoke;
   font-family: "Kanit";
-  font-size: 16px;
+  font-size: 1rem;
   padding: 10px 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   min-width: 150px;
+}
+.tabs button:not(.active-button) {
+  color: #000000;
 }
 .tabs-nav-first {
   border-radius: 50px 0 0 50px;
@@ -34,17 +36,27 @@
 }
 .active-button {
   background-color: #013274 !important;
-  color: rgb(0, 255, 0) !important;
+  color: rgb(255, 255, 255) !important;
+}
+.active-btn {
+  background-color: #ffc000 !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 /* Form */
 .form {
   display: -ms-flexbox;
   height: 100vh;
-  font-size: 16px;
+  font-size: 1rem;
   font-family: "Kanit", sans-serif;
   background-color: #ffffff;
   padding: 10px 200px 0 200px;
+}
+.cont-p-form input:focus,
+.pers-form input:focus,
+.inst-form input:focus {
+  outline: none;
+  box-shadow: 0 0 5px #ffc000;
 }
 
 .org-form input:focus,
@@ -64,21 +76,40 @@
 .type-form,
 .paym-form {
   background-color: #fff;
-  padding: 20px 40px 20px 40px;
-  border: 1px solid #ccc;
+  padding: 20px 60px 20px 60px;
+  border: 1px solid #00d0ff;
   border-radius: 8px;
   margin-top: 10px;
   margin-bottom: 20px;
   box-sizing: border-box;
   box-shadow: #013274 0px 0px 10px;
 }
+.cont-p-form,
+.pers-form,
+.inst-form,
+.type-p-form,
+.paym-p-form {
+  background-color: #fff;
+  padding: 20px 60px 20px 60px;
+  border: 1px solid #ffc000;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  box-shadow: #ffc000 0px 0px 10px;
+}
 
 .org-form div,
 .cont-form div,
 .rep-form div,
 .alt-rep-form div,
+.cont-p-form div,
+.pers-form div,
+.inst-form div,
+.type-p-form div,
+.paym-p-form div,
 .paym-form div {
-  margin: 10px;
+  margin: 0.75rem;
 }
 
 .input-container {
@@ -95,19 +126,31 @@ label {
   overflow: hidden;
 }
 
-input {
+.reg-body input {
   flex: 2;
   min-width: 50px;
   max-width: 300px;
   min-height: 30px;
-  border: #00d0ff 1px solid;
+  border: #00d0ff 1.5px solid;
   border-radius: 50px;
   font-family: "Kanit", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   text-indent: 18px;
   text-align: start;
 }
+.pers-form input,
+.inst-form input,
+.type-p-form input,
+.paym-p-form input,
+.cont-p-form input {
+  border: #ffc000 1.5px solid;
+}
 
+.type-p-form div input.input-error,
+.paym-p-form div input.input-error,
+.pers-form div input.input-error,
+.inst-form div input.input-error,
+.cont-p-form div input.input-error,
 .org-form div input.input-error,
 .cont-form div input.input-error,
 .rep-form div input.input-error,
@@ -115,7 +158,11 @@ input {
 .paym-form div input.input-error {
   border: 2px solid red !important;
 }
-
+.type-p-form p,
+.paym-p-form p,
+.pers-form p,
+.inst-form p,
+.cont-p-form p,
 .org-form p,
 .cont-form p,
 .rep-form p,
@@ -128,7 +175,7 @@ input {
   top: -20px;
   text-align: center;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 1.2rem;
 }
 
 .checkbox-container {
@@ -136,7 +183,11 @@ input {
   flex-direction: row;
   justify-content: space-evenly;
 }
-
+.pers-form:not(.active-form),
+.inst-form:not(.active-form),
+.cont-p-form:not(.active-form),
+.type-p-form:not(.active-form),
+.paym-p-form:not(.active-form),
 .org-form:not(.active-form),
 .cont-form:not(.active-form),
 .rep-form:not(.active-form),
@@ -147,31 +198,40 @@ input {
 }
 
 /* Button styles */
-.btn-container {
+.btn-container,
+.btn-container-p {
   text-align: center;
 }
 
-.btn-container button {
+.btn-container button,
+.btn-container-p button {
   font-family: "Kanit", sans-serif;
-  font-size: 16px;
-  /* margin: 10px; */
+  font-size: 1rem;
+  margin: 10px;
   padding: 10px 20px;
   background-color: #00d0ff;
   color: #000000;
   border: none;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  /* Add transitions for 3D effect and box shadow */
   border-radius: 6px;
+}
+.btn-container-p button {
+  background-color: #ffe599;
 }
 
 /* Hover effect */
-.btn-container button:hover {
+.btn-container button:hover,
+.btn-container-p button:hover {
   transform: perspective(1000px) rotateY(10deg) scale(1.05);
   /* transition: transform 0.3s ease; */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
-  color: #6ec1e4;
+  background-color: #013274;
+  color: #fff;
+}
+.btn-container-p button:hover {
+  background-color: #ffc000;
+  color: #000000;
 }
 
 /* After-click */
