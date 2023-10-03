@@ -103,16 +103,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         fclose($file);
     }
 
-    // Create a temporary CSV file
-    $tempCsvFile = tempnam(sys_get_temp_dir(), 'registration');
-    $file = fopen($tempCsvFile, 'w');
-    fputcsv($file, $formData);
-    fclose($file);
-
     // Append form data to the CSV file
     $file = fopen($filename, 'a');
     fputcsv($file, $formData);
     fclose($file);
+
+    // Create a JSON file from the form data
+    $filename = './db/registration_data.json';
+    $json = json_encode($formData, JSON_PRETTY_PRINT);
+
+    // Write the JSON data to the file
+    $file = fopen($filename, 'w');
+    fwrite($file, $json);
+    fclose($file);
+
+
 
     // Initialize PHPMailer
     $mail  = new PHPMailer(true);

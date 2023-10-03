@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormOrga from "./formOrga";
 import FormPers from "./formPers";
-import "../styles/form.css";
+import "../styles/formContainer.css";
 
 function FormContainer() {
     const [activeForm, setActiveForm] = useState(""); // Initial active form

@@ -1,4 +1,31 @@
-.bc{
+.bc {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap; /* Wrap items to the next line if the screen is narrow */
+}
+
+#orga,
+#pers {
+    flex: 1;
+    padding: 20px;
+    max-width: 300px; /* Adjust the maximum width as needed */
+    border: 1px solid #ccc;
+    margin: 10px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column; /* Stack button and text vertically */
+}
+
+#orga button,
+#pers button {
+  display: block;
+  margin: 0 auto; /* Center the button horizontally */
+}
+
+/* Add responsive styles for smaller screens if necessary */
+@media (max-width: 768px) {
+  #orga,
+  #pers {
+    max-width: 100%; /* Allow boxes to take full width on smaller screens */
+  }
 }

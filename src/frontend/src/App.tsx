@@ -13,7 +13,7 @@ function App() {
       {/* Render Routes */}
       <BrowserRouter>
         <Routes>
-          <Route path="/form" element={<FormContainer />} />
+          <Route path="/" element={<FormContainer />} />
           <Route path="/IndividualForm" element={<FormPers />} />
           <Route path="/OrganizationForm" element={<FormOrga />} />
           {/* <Route path="/login" element={<Login />} /> */}
