@@ -1,6 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import "../styles/form.css";
 import axios from "axios";
+import {
+  GoogleReCaptchaProvider,
+  GoogleReCaptcha,
+} from "react-google-recaptcha-v3";
 
 // Define a function component for the form field
 interface FormFieldProps {
@@ -33,7 +37,11 @@ const FormField: React.FC<FormFieldProps> = ({
   );
 };
 
+const SITE_KEY = "6LevxG8oAAAAAOz7sUG8_oDXcb3GKAH5YnenF1mb";
+
 function FormOrga() {
+  const [token, setToken] = useState<string | null | undefined>(null);
+  const [recaptchaStatus, setRecaptchaStatus] = useState(false);
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
@@ -195,50 +203,74 @@ function FormOrga() {
     setRecAddress("");
   };
 
+  const handleVerify = useCallback((token: string | null | undefined) => {
+    setToken(token);
+    setRecaptchaStatus(true);
+  }, []);
+  
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Create a new FormData object
     const formData = new FormData();
-
-    // Append all form fields to the formData object
-    formData.append("orgNameth", orgNameth);
-    formData.append("orgNameEn", orgNameEn);
-    formData.append("address", address);
-    formData.append("phone", phone);
-    formData.append("fax", fax);
-    // Coordinator
-    formData.append("contName", contName);
-    formData.append("contEmail", contEmail);
-    formData.append("contLine", contLine);
-    // Organization representative
-    formData.append("repName", repName);
-    formData.append("repPosition", repPosition);
-    formData.append("repAgency", repAgency);
-    formData.append("repPhone", repPhone);
-    formData.append("repFax", repFax);
-    formData.append("repEmail", repEmail);
-    formData.append("repLine", repLine);
-    // Alternate representative
-    formData.append("altRepName", altRepName);
-    formData.append("altRepPosition", altRepPosition);
-    formData.append("altRepAgency", altRepAgency);
-    formData.append("altRepPhone", altRepPhone);
-    formData.append("altRepFax", altRepFax);
-    formData.append("altRepEmail", altRepEmail);
-    formData.append("altRepLine", altRepLine);
-    // Types of Registration
-    if (typeA) {
-      formData.append("typeA", "setTypeA");
+    if (recaptchaStatus) {
+      // Append all form fields to the formData object
+      formData.append("orgNameth", orgNameth);
+      formData.append("orgNameEn", orgNameEn);
+      formData.append("address", address);
+      formData.append("phone", phone);
+      formData.append("fax", fax);
+      // Coordinator
+      formData.append("contName", contName);
+      formData.append("contEmail", contEmail);
+      formData.append("contLine", contLine);
+      // Organization representative
+      formData.append("repName", repName);
+      formData.append("repPosition", repPosition);
+      formData.append("repAgency", repAgency);
+      formData.append("repPhone", repPhone);
+      formData.append("repFax", repFax);
+      formData.append("repEmail", repEmail);
+      formData.append("repLine", repLine);
+      // Alternate representative
+      // Append all form fields to the formData object
+      formData.append("orgNameth", orgNameth);
+      formData.append("orgNameEn", orgNameEn);
+      formData.append("address", address);
+      formData.append("phone", phone);
+      formData.append("fax", fax);
+      // Coordinator
+      formData.append("contName", contName);
+      formData.append("contEmail", contEmail);
+      formData.append("contLine", contLine);
+      // Organization representative
+      formData.append("repName", repName);
+      formData.append("repPosition", repPosition);
+      formData.append("repAgency", repAgency);
+      formData.append("repPhone", repPhone);
+      formData.append("repFax", repFax);
+      formData.append("repEmail", repEmail);
+      formData.append("repLine", repLine);
+      // Alternate representative
+      formData.append("altRepName", altRepName);
+      formData.append("altRepPosition", altRepPosition);
+      formData.append("altRepAgency", altRepAgency);
+      formData.append("altRepPhone", altRepPhone);
+      formData.append("altRepFax", altRepFax);
+      formData.append("altRepEmail", altRepEmail);
+      formData.append("altRepLine", altRepLine);
+      // Types of Registration
+      if (typeA) {
+        formData.append("typeA", "setTypeA");
+      }
+      if (typeB) {
+        formData.append("typeB", "setTypeB");
+      }
+      // Payment
+      formData.append("recName", recName);
+      formData.append("taxIdNum", taxIdNum);
+      formData.append("recAddress", recAddress);
     }
-    if (typeB) {
-      formData.append("typeB", "setTypeB");
-    }
-    // Payment
-    formData.append("recName", recName);
-    formData.append("taxIdNum", taxIdNum);
-    formData.append("recAddress", recAddress);
-
     try {
       const response = await axios.post(
         "http://localhost:8000/form.php",
@@ -261,699 +293,698 @@ function FormOrga() {
   };
 
   return (
-    <div className="reg-body">
-      <div className="tabs">
-        <button
-          className={`tabs-nav-first ${
-            activeBtn === "first-form" ? "active-button" : ""
-          }`}
-          onClick={() => handleButtonClick("first-form", firstFormRef)}
-        >
-          ข้อมูลองค์กร
-        </button>
-        <button
-          className={`tabs-nav-end ${
-            activeBtn === "second-form" ? "active-button" : ""
-          }`}
-          onClick={() => {
-            if (
-              orgNameth.trim() !== "" &&
-              orgNameEn.trim() !== "" &&
-              address.trim() !== "" &&
-              phone.trim() !== "" &&
-              fax.trim() !== "" &&
-              contName.trim() !== "" &&
-              contEmail.trim() !== "" &&
-              repName.trim() !== "" &&
-              repEmail.trim() !== "" &&
-              repAgency.trim() !== "" &&
-              repPosition.trim() !== "" &&
-              repPhone.trim() !== "" &&
-              repFax.trim() !== "" &&
-              altRepName.trim() !== "" &&
-              altRepEmail.trim() !== "" &&
-              altRepPhone.trim() !== "" &&
-              altRepPosition.trim() !== "" &&
-              altRepAgency.trim() !== ""
-            ) {
-              handleButtonClick("second-form", secondFormRef);
-            } else {
-              alert("กรุณากรอกข้อมูลให้ครบ");
-            }
-          }}
-        >
-          การชำระเงิน
-        </button>
-      </div>
-
-      <form className="form" onSubmit={handleSubmit}>
-        <div
-          className={`org-form ${
-            activeForm === "first-form" ? "active-form" : ""
-          }`}
-        >
-          <p>องค์กร</p>
-          {/* Organization */}
-          <FormField
-            label="ชื่อองค์กรภาษาไทย"
-            type="text"
-            value={orgNameth}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setOrgNameth(inputValue);
-
-              e.target.classList.remove("input-error");
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
+    <GoogleReCaptchaProvider reCaptchaKey="6LevxG8oAAAAAOz7sUG8_oDXcb3GKAH5YnenF1mb">
+      <div className="reg-body">
+        <div className="tabs">
+          <button
+            className={`tabs-nav-first ${activeBtn === "first-form" ? "active-button" : ""
+              }`}
+            onClick={() => handleButtonClick("first-form", firstFormRef)}
+          >
+            ข้อมูลองค์กร
+          </button>
+          <button
+            className={`tabs-nav-end ${activeBtn === "second-form" ? "active-button" : ""
+              }`}
+            onClick={() => {
+              if (
+                orgNameth.trim() !== "" &&
+                orgNameEn.trim() !== "" &&
+                address.trim() !== "" &&
+                phone.trim() !== "" &&
+                fax.trim() !== "" &&
+                contName.trim() !== "" &&
+                contEmail.trim() !== "" &&
+                repName.trim() !== "" &&
+                repEmail.trim() !== "" &&
+                repAgency.trim() !== "" &&
+                repPosition.trim() !== "" &&
+                repPhone.trim() !== "" &&
+                repFax.trim() !== "" &&
+                altRepName.trim() !== "" &&
+                altRepEmail.trim() !== "" &&
+                altRepPhone.trim() !== "" &&
+                altRepPosition.trim() !== "" &&
+                altRepAgency.trim() !== ""
+              ) {
+                handleButtonClick("second-form", secondFormRef);
               } else {
-                // Clear error styles if input is valid
-                e.target.classList.remove("input-error");
+                alert("กรุณากรอกข้อมูลให้ครบ");
               }
             }}
-          />
-          <FormField
-            label="ชื่อองค์กรภาษาอังกฤษ"
-            type="text"
-            value={orgNameEn}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidEng = isEngOnly(inputValue);
-
-              setOrgNameEn(inputValue);
-              e.target.classList.remove("input-error");
-              if (!isValidEng) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
-                e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="ที่อยู่หน่วยงาน"
-            type="text"
-            value={address}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setAddress(inputValue);
-
-              e.target.classList.remove("input-error");
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
-                e.target.classList.remove("input-error");
-              }
-            }}
-          />
-
-          <FormField
-            label="โทรศัพท์"
-            type="text"
-            value={phone}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setPhone(inputValue);
-
-              e.target.classList.remove("input-error");
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
-                e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="แฟกซ์"
-            type="text"
-            value={fax}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setFax(inputValue);
-
-              e.target.classList.remove("input-error");
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
-                e.target.classList.remove("input-error");
-              }
-            }}
-          />
+          >
+            การชำระเงิน
+          </button>
         </div>
 
-        <div
-          className={`cont-form ${
-            activeForm === "first-form" ? "active-form" : ""
-          }`}
-        >
-          <p>ข้อมูลการติดต่อ</p>
-          {/* Contractor */}
-          <FormField
-            label="ชื่อผู้ประสานงาน"
-            type="text"
-            value={contName}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setContName(inputValue);
+        <form className="form" onSubmit={handleSubmit}>
+          <div
+            className={`org-form ${activeForm === "first-form" ? "active-form" : ""
+              }`}
+          >
+            <p>องค์กร</p>
+            {/* Organization */}
+            <FormField
+              label="ชื่อองค์กรภาษาไทย"
+              type="text"
+              value={orgNameth}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setOrgNameth(inputValue);
 
-              e.target.classList.remove("input-error");
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="อีเมล"
-            type="email"
-            value={contEmail}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidMail = isEmail(inputValue);
-              setContEmail(inputValue);
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="ชื่อองค์กรภาษาอังกฤษ"
+              type="text"
+              value={orgNameEn}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidEng = isEngOnly(inputValue);
 
-              e.target.classList.remove("input-error");
-              if (!isValidMail) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log("Please enter a valid email address.");
-              } else {
-                // Clear error styles if input is valid
+                setOrgNameEn(inputValue);
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
+                if (!isValidEng) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="ที่อยู่หน่วยงาน"
+              type="text"
+              value={address}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setAddress(inputValue);
 
-          <FormField
-            label="Line"
-            type="text"
-            value={contLine}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidLine = inputValue;
-              setContLine(inputValue);
-
-              e.target.classList.remove("input-error");
-            }}
-            onKeyPress={(e) => {
-              if (isThaiOnly(e.key)) {
-                e.preventDefault();
-              }
-            }}
-          />
-        </div>
-
-        <div
-          className={`rep-form ${
-            activeForm === "first-form" ? "active-form" : ""
-          }`}
-        >
-          <p>ผู้สำรององค์กร</p>
-          {/* Organization representative */}
-          <FormField
-            label="ชื่อและนามสกุล"
-            type="text"
-            value={repName}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setRepName(inputValue);
-
-              e.target.classList.remove("input-error");
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="หน่วยงาน"
-            type="text"
-            value={repAgency}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setRepAgency(inputValue);
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
 
-              e.target.classList.remove("input-error");
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
+            <FormField
+              label="โทรศัพท์"
+              type="text"
+              value={phone}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setPhone(inputValue);
+
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="ตำแหน่ง"
-            type="text"
-            value={repPosition}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setRepPosition(inputValue);
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="แฟกซ์"
+              type="text"
+              value={fax}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setFax(inputValue);
 
-              e.target.classList.remove("input-error");
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="โทรศัพท์"
-            type="text"
-            value={repPhone}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setRepPhone(inputValue);
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+          </div>
 
-              e.target.classList.remove("input-error");
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log("Plese enter a valid phone number.");
-              } else {
-                // Clear error styles if input is valid
+          <div
+            className={`cont-form ${activeForm === "first-form" ? "active-form" : ""
+              }`}
+          >
+            <p>ข้อมูลการติดต่อ</p>
+            {/* Contractor */}
+            <FormField
+              label="ชื่อผู้ประสานงาน"
+              type="text"
+              value={contName}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setContName(inputValue);
+
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="แฟกซ์"
-            type="text"
-            value={repFax}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setRepFax(inputValue);
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="อีเมล"
+              type="email"
+              value={contEmail}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidMail = isEmail(inputValue);
+                setContEmail(inputValue);
 
-              e.target.classList.remove("input-error");
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="อีเมล"
-            type="email"
-            value={repEmail}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidMail = isEmail(inputValue);
-              setRepEmail(inputValue);
+                if (!isValidMail) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log("Please enter a valid email address.");
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
 
-              e.target.classList.remove("input-error");
-              if (!isValidMail) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log("Please enter a valid email address.");
-              } else {
-                // Clear error styles if input is valid
+            <FormField
+              label="Line"
+              type="text"
+              value={contLine}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidLine = inputValue;
+                setContLine(inputValue);
+
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="Line"
-            type="text"
-            value={repLine}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              setRepLine(inputValue);
+              }}
+              onKeyPress={(e) => {
+                if (isThaiOnly(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+            />
+          </div>
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (isThaiOnly(inputValue)) {
-                e.target.classList.add("input-error");
-              } else {
-                // Clear error styles if input is valid
+          <div
+            className={`rep-form ${activeForm === "first-form" ? "active-form" : ""
+              }`}
+          >
+            <p>ผู้สำรององค์กร</p>
+            {/* Organization representative */}
+            <FormField
+              label="ชื่อและนามสกุล"
+              type="text"
+              value={repName}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setRepName(inputValue);
+
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-        </div>
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="หน่วยงาน"
+              type="text"
+              value={repAgency}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setRepAgency(inputValue);
 
-        <div
-          className={`alt-rep-form ${
-            activeForm === "first-form" ? "active-form" : ""
-          }`}
-        >
-          <p>ผู้สำรองผู้แทนองค์กร</p>
-          {/* Alternate representative */}
-          <FormField
-            label="ชื่อและนามสกุล"
-            type="text"
-            value={altRepName}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setAltRepName(inputValue);
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="หน่วยงาน"
-            type="text"
-            value={altRepAgency}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setAltRepAgency(inputValue);
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="ตำแหน่ง"
+              type="text"
+              value={repPosition}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setRepPosition(inputValue);
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="โทรศัพท์"
+              type="text"
+              value={repPhone}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setRepPhone(inputValue);
 
-          <FormField
-            label="ตำแหน่ง"
-            type="text"
-            value={altRepPosition}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setAltRepPosition(inputValue);
-
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log("Plese enter a valid phone number.");
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="แฟกซ์"
+              type="text"
+              value={repFax}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setRepFax(inputValue);
 
-          <FormField
-            label="โทรศัพท์"
-            type="text"
-            value={altRepPhone}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setAltRepPhone(inputValue);
-
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="แฟกซ์"
-            type="text"
-            value={altRepFax}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setAltRepFax(inputValue);
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="อีเมล"
+              type="email"
+              value={repEmail}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidMail = isEmail(inputValue);
+                setRepEmail(inputValue);
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="อีเมล"
-            type="email"
-            value={altRepEmail}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidMail = isEmail(inputValue);
-              setAltRepEmail(inputValue);
+                if (!isValidMail) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log("Please enter a valid email address.");
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="Line"
+              type="text"
+              value={repLine}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                setRepLine(inputValue);
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidMail) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="Line"
-            type="text"
-            value={altRepLine}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              setAltRepLine(inputValue);
+                // Perform validation
+                if (isThaiOnly(inputValue)) {
+                  e.target.classList.add("input-error");
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+          </div>
 
-              e.target.classList.remove("input-error");
-              if (isThaiOnly(inputValue)) {
-                e.target.classList.add("input-error");
-              } else {
-                // Clear error styles if input is valid
+          <div
+            className={`alt-rep-form ${activeForm === "first-form" ? "active-form" : ""
+              }`}
+          >
+            <p>ผู้สำรองผู้แทนองค์กร</p>
+            {/* Alternate representative */}
+            <FormField
+              label="ชื่อและนามสกุล"
+              type="text"
+              value={altRepName}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setAltRepName(inputValue);
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-        </div>
-        <div
-          className={`type-form ${
-            activeForm === "second-form" ? "active-form" : ""
-          }`}
-        >
-          <p>ประเภทการเป็นสมาชิก</p>
-          {/* Types of Registration*/}
-          <div className="checkbox-container">
-            <div id="box">
-              <label className="checkbox-label" htmlFor="checkboxA">
-                <input
-                  type="checkbox"
-                  checked={typeA}
-                  onChange={handleBoxACheck}
-                  // className="checkbox-input"
-                  id="checkboxA"
-                />
-                สมาชิกตลอกชีพ 100,000 บาท
-              </label>
-            </div>
-            <div id="box">
-              <label className="checkbox-label" htmlFor="checkboxB">
-                <input
-                  type="checkbox"
-                  checked={typeB}
-                  onChange={handleBoxBCheck}
-                  // className="checkbox-input"
-                  id="checkboxB"
-                />
-                สมาชิกราย 3 ปี 30,000 บาท
-              </label>
+                // Perform validation
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="หน่วยงาน"
+              type="text"
+              value={altRepAgency}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setAltRepAgency(inputValue);
+
+                e.target.classList.remove("input-error");
+                // Perform validation
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+
+            <FormField
+              label="ตำแหน่ง"
+              type="text"
+              value={altRepPosition}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setAltRepPosition(inputValue);
+
+                e.target.classList.remove("input-error");
+                // Perform validation
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+
+            <FormField
+              label="โทรศัพท์"
+              type="text"
+              value={altRepPhone}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setAltRepPhone(inputValue);
+
+                e.target.classList.remove("input-error");
+                // Perform validation
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="แฟกซ์"
+              type="text"
+              value={altRepFax}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setAltRepFax(inputValue);
+
+                e.target.classList.remove("input-error");
+                // Perform validation
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="อีเมล"
+              type="email"
+              value={altRepEmail}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidMail = isEmail(inputValue);
+                setAltRepEmail(inputValue);
+
+                e.target.classList.remove("input-error");
+                // Perform validation
+                if (!isValidMail) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="Line"
+              type="text"
+              value={altRepLine}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                setAltRepLine(inputValue);
+
+                e.target.classList.remove("input-error");
+                if (isThaiOnly(inputValue)) {
+                  e.target.classList.add("input-error");
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+          </div>
+          <div
+            className={`type-form ${activeForm === "second-form" ? "active-form" : ""
+              }`}
+          >
+            <p>ประเภทการเป็นสมาชิก</p>
+            {/* Types of Registration*/}
+            <div className="checkbox-container">
+              <div id="box">
+                <label className="checkbox-label" htmlFor="checkboxA">
+                  <input
+                    type="checkbox"
+                    checked={typeA}
+                    onChange={handleBoxACheck}
+                    // className="checkbox-input"
+                    id="checkboxA"
+                  />
+                  สมาชิกตลอกชีพ 100,000 บาท
+                </label>
+              </div>
+              <div id="box">
+                <label className="checkbox-label" htmlFor="checkboxB">
+                  <input
+                    type="checkbox"
+                    checked={typeB}
+                    onChange={handleBoxBCheck}
+                    // className="checkbox-input"
+                    id="checkboxB"
+                  />
+                  สมาชิกราย 3 ปี 30,000 บาท
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          className={`paym-form ${
-            activeForm === "second-form" ? "active-form" : ""
-          }`}
-        >
-          <p>การชำระเงิน</p>
-          {/* Payment */}
-          <FormField
-            label="ออกใบเสร็จในนาม"
-            type="text"
-            value={recName}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setRecName(inputValue);
+          <div
+            className={`paym-form ${activeForm === "second-form" ? "active-form" : ""
+              }`}
+          >
+            <p>การชำระเงิน</p>
+            {/* Payment */}
+            <FormField
+              label="ออกใบเสร็จในนาม"
+              type="text"
+              value={recName}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setRecName(inputValue);
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="เลขประจําตัวผู้เสียภาษี"
-            type="text"
-            value={taxIdNum}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidNum = isNumOnly(inputValue);
-              setTaxIdNum(inputValue);
+                // Perform validation
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="เลขประจําตัวผู้เสียภาษี"
+              type="text"
+              value={taxIdNum}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidNum = isNumOnly(inputValue);
+                setTaxIdNum(inputValue);
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidNum) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-          <FormField
-            label="ที่อยู่ในการออกใบเสร็จ"
-            type="text"
-            value={recAddress}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              const isValidThai = isThaiOnly(inputValue);
-              setRecAddress(inputValue);
+                // Perform validation
+                if (!isValidNum) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
+            <FormField
+              label="ที่อยู่ในการออกใบเสร็จ"
+              type="text"
+              value={recAddress}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                const isValidThai = isThaiOnly(inputValue);
+                setRecAddress(inputValue);
 
-              e.target.classList.remove("input-error");
-              // Perform validation
-              if (!isValidThai) {
-                // Invalid input, mark as invalid
-                e.target.classList.add("input-error");
-                console.log(
-                  "Invalid input. Please enter Thai characters only."
-                );
-              } else {
-                // Clear error styles if input is valid
                 e.target.classList.remove("input-error");
-              }
-            }}
-          />
-        </div>
-
-        {activeForm === "first-form" && (
-          <div className="btn-container">
-            <button id="next" type="button" onClick={handleFirstFormSubmit}>
-              หน้าถัดไป
-            </button>
-            <button id="cancel" type="reset" onClick={handleCancel}>
-              ยกเลิก
-            </button>
+                // Perform validation
+                if (!isValidThai) {
+                  // Invalid input, mark as invalid
+                  e.target.classList.add("input-error");
+                  console.log(
+                    "Invalid input. Please enter Thai characters only."
+                  );
+                } else {
+                  // Clear error styles if input is valid
+                  e.target.classList.remove("input-error");
+                }
+              }}
+            />
           </div>
-        )}
 
-        {activeForm === "second-form" && (
-          <div className="btn-container">
-            <button type="submit">สมัครสมาชิก</button>
-            <button type="button" onClick={handleBack}>
-              ย้อนกลับ
-            </button>
-          </div>
-        )}
-
-        <div>
-          {registrationResult && (
-            <p className="registration-result">{registrationResult}</p>
+          {activeForm === "first-form" && (
+            <div className="btn-container">
+              <button id="next" type="button" onClick={handleFirstFormSubmit}>
+                หน้าถัดไป
+              </button>
+              <button id="cancel" type="reset" onClick={handleCancel}>
+                ยกเลิก
+              </button>
+            </div>
           )}
-        </div>
-      </form>
-    </div>
+          
+          {activeForm === "second-form" && (
+            <div className="btn-container">
+              <GoogleReCaptcha onVerify={handleVerify} />
+              <button
+                type="submit" disabled={recaptchaStatus === false}
+              >
+                สมัครสมาชิก
+              </button>
+              <button type="button" onClick={handleBack}>
+                ย้อนกลับ
+              </button>
+            </div>
+          )}
+
+          <div>
+            {registrationResult && (
+              <p className="registration-result">{registrationResult}</p>
+            )}
+          </div>
+        </form>
+      </div>
+    </GoogleReCaptchaProvider>
   );
 }
 

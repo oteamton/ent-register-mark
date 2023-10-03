@@ -1,8 +1,38 @@
 <?php
-
+// Import PHPMailer classes into the global namespace
 require './vendor/autoload.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+// Verify reCAPTCHA
+$recaptcha_secret = '6LevxG8oAAAAAF1H0cgTdbAnvO0-My8nCnzrxg8w';
+$recaptcha_response = $_POST['g-recaptcha-response'];
+
+$url = 'https://www.google.com/recaptcha/api/siteverify';
+$data = array(
+    'secret' => $recaptcha_secret,
+    'response' => $recaptcha_response
+);
+
+$options = array(
+    'http' => array(
+        'method' => 'POST',
+        'content' => http_build_query($data)
+    )
+);
+
+$context = stream_context_create($options);
+$verify = file_get_contents($url, false, $context);
+$captcha_success = json_decode($verify);
+
+if ($captcha_success->success) {
+    // reCAPTCHA verification passed
+    // Process your form data here
+} else {
+    // reCAPTCHA verification failed
+    echo "reCAPTCHA verification failed. Please try again.";
+}
 
 // Set the CORS headers
 header("Access-Control-Allow-Origin: http://localhost:8000");
@@ -19,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'];
     $phone = $_POST['phone'];
     $fax = $_POST['fax'];
-    
+
     $contName = $_POST['contName'];
     $contEmail = $_POST['contEmail'];
     $contLine = $_POST['contLine'];
@@ -52,20 +82,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectedType = "";  // Set a default value if neither typeA nor typeB is set
     }
 
-    $formData = array($orgNameth, $orgNameEn, $address, $phone, $fax, $contName,
-    $contEmail, $contLine,
-    $repName, $repPosition, $repAgency, $repFax, $repPhone, $repEmail, $repLine,
-    $altRepName, $altRepPosition, $altRepAgency, $altRepFax, $altRepPhone, $altRepEmail, $altRepLine,
-    $selectedType,
-    $recName, $taxIdNum, $recAddress );
+    $formData = array(
+        $orgNameth, $orgNameEn, $address, $phone, $fax, $contName,
+        $contEmail, $contLine,
+        $repName, $repPosition, $repAgency, $repFax, $repPhone, $repEmail, $repLine,
+        $altRepName, $altRepPosition, $altRepAgency, $altRepFax, $altRepPhone, $altRepEmail, $altRepLine,
+        $selectedType,
+        $recName, $taxIdNum, $recAddress
+    );
 
     $filename = './db/registration_data.csv';
     // Check if the file already exists; if not, create a new one and add headers
     if (!file_exists($filename)) {
         $file = fopen($filename, 'w');
-        fputcsv($file, array('ชื่องค์กร (TH)', 'ชื่อองค์กร (EN)', 'ที่อยู่', 'โทรศัพท์', 'แฟกซ์',
+        fputcsv($file, array(
+            'ชื่องค์กร (TH)', 'ชื่อองค์กร (EN)', 'ที่อยู่', 'โทรศัพท์', 'แฟกซ์',
             'ชื่อผู้ประสานงาน', 'อีเมลผู้ประสานงาน', 'line ผู้ประสานงาน', 'ชื่อผู้สำรององค์กร', 'ต่ำแหน่งผู้สำรององค์กร', 'หน่วยงานผู้สำรององค์กร', 'แฟกซ์', 'โทรศัพท์ผู้สำรององค์กร', 'อีเมลผู้สำรององค์กร', 'line ผู้สำรององค์กร', 'Alternate Representative Name', 'Alternate Representative Position', 'Alternate Representative Agency', 'Alternate Representative Fax', 'Alternate Representative Phone', 'Alternate Representative Email', 'Alternate Representative Line',
-            'Type of Registration', 'Recipient Name', 'Tax ID Number', 'Recipient Address'));
+            'Type of Registration', 'Recipient Name', 'Tax ID Number', 'Recipient Address'
+        ));
         fclose($file);
     }
 
@@ -88,11 +122,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->SMTPDebug = 2; // Set to 2 for debugging (0 for production)
         $mail->isSMTP();
 
-        $mail->Host = 'kitchanunt@g.swu.ac.th'; // Replace with your SMTP server
+        $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP server
         $mail->SMTPAuth = true;
         $mail->Username = 'kitchanunt@g.swu.ac.th';
-        $mail->Password = 'Ton26052543';
-        $mail->SMTPSecure = 'tls';
+        $mail->Password = '';
+        $mail->SMTPSecure = 'ssl';
         $mail->Port = 587;
 
         //Recipients
@@ -102,11 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Attach file
         $mail->addAttachment($tempCsvFile, 'registration.csv');
 
-        
+
         // Content
         $mail->isHTML(false); // Set to true if you want to send HTML emails
         $mail->Subject = $subject;
-        $mail->Body = "Name: $name\nEmail: $coEmail\nMessage:\n$message";
+        $mail->Body = "Name: $name\nEmail: $coEmail";
 
         $mail->send();
         echo "Email sent successfully!";
