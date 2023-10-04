@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import "../styles/form.css";
+import "../styles/fonts.css";
 import axios from "axios";
 import {
   GoogleReCaptchaProvider,
@@ -37,10 +38,8 @@ const FormField: React.FC<FormFieldProps> = ({
   );
 };
 
-const SITE_KEY = "6LevxG8oAAAAAOz7sUG8_oDXcb3GKAH5YnenF1mb";
-
 function FormOrga() {
-  const [token, setToken] = useState<string | null | undefined>(null);
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [recaptchaStatus, setRecaptchaStatus] = useState(false);
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
@@ -119,8 +118,6 @@ function FormOrga() {
     otherForms.forEach((form) => {
       form.classList.remove("active-form");
     });
-
-    // setActiveBtn(formName);
   };
 
   const handleBoxACheck = () => {
@@ -143,26 +140,27 @@ function FormOrga() {
   };
 
   const handleFirstFormSubmit = () => {
+    window.grecaptcha.execute();
     // Check if all required fields are filled
     if (
-      orgNameth.trim() !== "" &&
-      orgNameEn.trim() !== "" &&
-      address.trim() !== "" &&
-      phone.trim() !== "" &&
-      fax.trim() !== "" &&
-      contName.trim() !== "" &&
-      contEmail.trim() !== "" &&
-      repName.trim() !== "" &&
-      repEmail.trim() !== "" &&
-      repAgency.trim() !== "" &&
-      repPosition.trim() !== "" &&
-      repPhone.trim() !== "" &&
-      repFax.trim() !== "" &&
-      altRepName.trim() !== "" &&
-      altRepEmail.trim() !== "" &&
-      altRepPhone.trim() !== "" &&
-      altRepPosition.trim() !== "" &&
-      altRepAgency.trim() !== ""
+      orgNameth.trim() !== ""
+      // orgNameEn.trim() !== "" &&
+      // address.trim() !== "" &&
+      // phone.trim() !== "" &&
+      // fax.trim() !== "" &&
+      // contName.trim() !== "" &&
+      // contEmail.trim() !== "" &&
+      // repName.trim() !== "" &&
+      // repEmail.trim() !== "" &&
+      // repAgency.trim() !== "" &&
+      // repPosition.trim() !== "" &&
+      // repPhone.trim() !== "" &&
+      // repFax.trim() !== "" &&
+      // altRepName.trim() !== "" &&
+      // altRepEmail.trim() !== "" &&
+      // altRepPhone.trim() !== "" &&
+      // altRepPosition.trim() !== "" &&
+      // altRepAgency.trim() !== ""
     ) {
       setCanProceed(true);
       handleButtonClick("second-form", secondFormRef);
@@ -204,10 +202,38 @@ function FormOrga() {
   };
 
   const handleVerify = useCallback((token: string | null | undefined) => {
-    setToken(token);
     setRecaptchaStatus(true);
   }, []);
-  
+
+  const handleCopyClick = (text: string) => {
+    // Using the Clipboard API where supported
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopyStatus("Copied to clipboard!");
+        console.log("Text copied to clipboard");
+        setTimeout(() => {
+          setCopyStatus(null);  // Clear the copy status after 3 seconds
+        }, 3000);
+      }).catch(err => {
+        console.error("Unable to copy text", err);
+      });
+    } else {
+      // Fallback to older method for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        console.log("Text copied to clipboard");
+      } catch (err) {
+        console.error("Unable to copy text", err);
+      }
+      document.body.removeChild(textArea);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -842,6 +868,14 @@ function FormOrga() {
               }}
             />
           </div>
+
+          <div className={`pay-detail-o ${activeForm === "second-form" ? "active-form" : ""
+            }`}>
+            <h1>กรุณาชำระค่าสมัครสมาชิก เข้าบัญชีออมทรัพย์</h1>
+            <p>สมาคมพันธกิจสัมพันธ์มหาวิทยาลัยกับสังคม เลขที่ <span id="bank-num" onClick={() => handleCopyClick("3282503717")}>328-250371-7</span> ธนาคารไทยพาณิชย์ สาขาเมืองทองธานี</p>
+            {copyStatus && <div className="copy-status">{copyStatus}</div>}
+          </div>
+
           <div
             className={`type-form ${activeForm === "second-form" ? "active-form" : ""
               }`}
@@ -954,6 +988,7 @@ function FormOrga() {
 
           {activeForm === "first-form" && (
             <div className="btn-container">
+              <GoogleReCaptcha onVerify={handleVerify} />
               <button id="next" type="button" onClick={handleFirstFormSubmit}>
                 หน้าถัดไป
               </button>
@@ -962,7 +997,7 @@ function FormOrga() {
               </button>
             </div>
           )}
-          
+
           {activeForm === "second-form" && (
             <div className="btn-container">
               <GoogleReCaptcha onVerify={handleVerify} />

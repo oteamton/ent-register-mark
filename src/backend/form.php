@@ -1,9 +1,19 @@
 <?php
-// Import PHPMailer classes into the global namespace
 require './vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+// Set the CORS headers
+header("Access-Control-Allow-Origin: http://localhost:8000");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(400);
+    echo json_encode(["error" => "Invalid request method"]);
+    exit;
+}
 
 // Verify reCAPTCHA
 $recaptcha_secret = '6LevxG8oAAAAAF1H0cgTdbAnvO0-My8nCnzrxg8w';
@@ -26,22 +36,27 @@ $context = stream_context_create($options);
 $verify = file_get_contents($url, false, $context);
 $captcha_success = json_decode($verify);
 
-if ($captcha_success->success) {
-    // reCAPTCHA verification passed
-    // Process your form data here
-} else {
-    // reCAPTCHA verification failed
+if (!$captcha_success->success) {
     echo "reCAPTCHA verification failed. Please try again.";
+    exit;
 }
 
-// Set the CORS headers
-header("Access-Control-Allow-Origin: http://localhost:8000");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+$recipient = "oteamton@gmail.com";
+$subject = "Form Submission";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $recipient = "oteamton@gmail.com";
-    $subject = "Form Submission";
+    $reqFields = [
+        'orgNameth', 'orgNameEn', 'address', 'phone', 'fax', 'contName', 'contEmail',
+        'repName', 'repPosition', 'repAgency', 'repFax', 'repPhone', 'repEmail',
+        'altRepName', 'altRepPosition', 'altRepAgency', 'altRepFax', 'altRepPhone', 'altRepEmail',
+        'selectedType', 'recName', 'taxIdNum', 'recAddress'
+    ];
+
+    foreach ($requiredFields as $field) {
+        if (!isset($_POST[$field]) || empty($_POST[$field])) {
+            die("Error: Missing value for $field.");
+        }
+    }
 
     // Retrieve form data
     $orgNameth = $_POST['orgNameth'];
@@ -91,75 +106,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $recName, $taxIdNum, $recAddress
     );
 
-    $filename = './db/registration_data.csv';
-    // Check if the file already exists; if not, create a new one and add headers
-    if (!file_exists($filename)) {
-        $file = fopen($filename, 'w');
-        fputcsv($file, array(
-            'ชื่องค์กร (TH)', 'ชื่อองค์กร (EN)', 'ที่อยู่', 'โทรศัพท์', 'แฟกซ์',
-            'ชื่อผู้ประสานงาน', 'อีเมลผู้ประสานงาน', 'line ผู้ประสานงาน', 'ชื่อผู้สำรององค์กร', 'ต่ำแหน่งผู้สำรององค์กร', 'หน่วยงานผู้สำรององค์กร', 'แฟกซ์', 'โทรศัพท์ผู้สำรององค์กร', 'อีเมลผู้สำรององค์กร', 'line ผู้สำรององค์กร', 'Alternate Representative Name', 'Alternate Representative Position', 'Alternate Representative Agency', 'Alternate Representative Fax', 'Alternate Representative Phone', 'Alternate Representative Email', 'Alternate Representative Line',
-            'Type of Registration', 'Recipient Name', 'Tax ID Number', 'Recipient Address'
-        ));
-        fclose($file);
+    $filename = './db/registration.json';
+    $existingData = [];
+
+    if (file_exists($filename)) {
+        $existingData = json_decode(file_get_contents($filename), true);
     }
 
-    // Append form data to the CSV file
-    $file = fopen($filename, 'a');
-    fputcsv($file, $formData);
-    fclose($file);
+    $existingData[] = $formData;
 
-    // Create a JSON file from the form data
-    $filename = './db/registration_data.json';
-    $json = json_encode($formData, JSON_PRETTY_PRINT);
+    file_put_contents($filename, json_encode($existingData, JSON_PRETTY_PRINT));
 
-    // Write the JSON data to the file
-    $file = fopen($filename, 'w');
-    fwrite($file, $json);
-    fclose($file);
-
-
-
-    // Initialize PHPMailer
+    // PHPMailer setup and email sending
     $mail  = new PHPMailer(true);
-
     try {
-        //Server settings
-        $mail->SMTPDebug = 2; // Set to 2 for debugging (0 for production)
+        $mail->SMTPDebug = 2;
         $mail->isSMTP();
-
-        $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP server
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'kitchanunt@g.swu.ac.th';
-        $mail->Password = '';
+        $mail->Password = 'Ton26052543'; // Do not expose passwords in your code
         $mail->SMTPSecure = 'ssl';
         $mail->Port = 587;
 
-        //Recipients
         $mail->setFrom($contEmail, $contName);
         $mail->addAddress($recipient);
-
-        // Attach file
-        $mail->addAttachment($tempCsvFile, 'registration.csv');
-
-
-        // Content
-        $mail->isHTML(false); // Set to true if you want to send HTML emails
+        $mail->addAttachment($filename, 'registration.json');
+        $mail->isHTML(false);
         $mail->Subject = $subject;
-        $mail->Body = "Name: $name\nEmail: $coEmail";
+        $mail->Body = "Form submitted with details:\n\n" . json_encode($formData, JSON_PRETTY_PRINT); // Example body
 
         $mail->send();
         echo "Email sent successfully!";
     } catch (Exception $e) {
         echo "Email sending failed: {$mail->ErrorInfo}";
-    } finally {
-        unlink($tempCsvFile);
     }
 
-    // Respond with success status
     http_response_code(200);
     echo json_encode(["success" => true]);
-} else {
-    // Respond with an error status if the request method is not POST
-    http_response_code(400);
-    echo json_encode(["error" => "Invalid request method"]);
 }
