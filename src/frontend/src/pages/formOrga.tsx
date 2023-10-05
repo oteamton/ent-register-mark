@@ -44,6 +44,7 @@ function FormOrga() {
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
+  const [formtype] = useState<string>("Organisation");
   // Define state variables for registration
   const [registrationResult, setRegistrationResult] = useState<string | null>(
     null
@@ -139,39 +140,40 @@ function FormOrga() {
     }
   };
 
-  const handleFirstFormSubmit = () => {
-    window.grecaptcha.execute();
+  const handleFirstPagePass = () => {
     // Check if all required fields are filled
-    if (
-      orgNameth.trim() !== ""
-      // orgNameEn.trim() !== "" &&
-      // address.trim() !== "" &&
-      // phone.trim() !== "" &&
-      // fax.trim() !== "" &&
-      // contName.trim() !== "" &&
-      // contEmail.trim() !== "" &&
-      // repName.trim() !== "" &&
-      // repEmail.trim() !== "" &&
-      // repAgency.trim() !== "" &&
-      // repPosition.trim() !== "" &&
-      // repPhone.trim() !== "" &&
-      // repFax.trim() !== "" &&
-      // altRepName.trim() !== "" &&
-      // altRepEmail.trim() !== "" &&
-      // altRepPhone.trim() !== "" &&
-      // altRepPosition.trim() !== "" &&
-      // altRepAgency.trim() !== ""
-    ) {
-      setCanProceed(true);
-      handleButtonClick("second-form", secondFormRef);
-    } else {
-      alert("กรุณากรอกข้อมูลให้ครบ");
-    }
+    // if (
+    //   orgNameth.trim() !== "" &&
+    //   orgNameEn.trim() !== "" &&
+    //   address.trim() !== "" &&
+    //   phone.trim() !== "" &&
+    //   fax.trim() !== "" &&
+    //   contName.trim() !== "" &&
+    //   contEmail.trim() !== "" &&
+    //   repName.trim() !== "" &&
+    //   repEmail.trim() !== "" &&
+    //   repAgency.trim() !== "" &&
+    //   repPosition.trim() !== "" &&
+    //   repPhone.trim() !== "" &&
+    //   repFax.trim() !== "" &&
+    //   altRepName.trim() !== "" &&
+    //   altRepEmail.trim() !== "" &&
+    //   altRepPhone.trim() !== "" &&
+    //   altRepPosition.trim() !== "" &&
+    //   altRepAgency.trim() !== ""
+    // ) {
+    //   setCanProceed(true);
+    //   handleButtonClick("second-form", secondFormRef);
+    // } else {
+    //   alert("กรุณากรอกข้อมูลให้ครบ");
+    // }
+    handleButtonClick("second-form", secondFormRef);
   };
 
   const handleBack = () => {
     handleButtonClick("first-form", firstFormRef);
   };
+
   const handleCancel = () => {
     setOrgNameth("");
     setOrgNameEn("");
@@ -201,22 +203,44 @@ function FormOrga() {
     setRecAddress("");
   };
 
-  const handleVerify = useCallback((token: string | null | undefined) => {
-    setRecaptchaStatus(true);
+  const handleVerify = useCallback((token: string
+  ) => {
+    // Send token to your PHP backend for verification
+    fetch('http://localhost:8000/form.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `recaptchaToken=${token}`
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          setRecaptchaStatus(true);
+        } else {
+          console.error('Failed reCAPTCHA verification.');
+        }
+      })
+      .catch(error => {
+        console.error('Error verifying reCAPTCHA token:', error);
+      });
   }, []);
 
   const handleCopyClick = (text: string) => {
     // Using the Clipboard API where supported
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => {
-        setCopyStatus("Copied to clipboard!");
-        console.log("Text copied to clipboard");
-        setTimeout(() => {
-          setCopyStatus(null);  // Clear the copy status after 3 seconds
-        }, 3000);
-      }).catch(err => {
-        console.error("Unable to copy text", err);
-      });
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setCopyStatus("Copied to clipboard!");
+          console.log("Text copied to clipboard");
+          setTimeout(() => {
+            setCopyStatus(null); // Clear the copy status after 3 seconds
+          }, 3000);
+        })
+        .catch((err) => {
+          console.error("Unable to copy text", err);
+        });
     } else {
       // Fallback to older method for older browsers
       const textArea = document.createElement("textarea");
@@ -225,7 +249,7 @@ function FormOrga() {
       textArea.focus();
       textArea.select();
       try {
-        document.execCommand('copy');
+        document.execCommand("copy");
         console.log("Text copied to clipboard");
       } catch (err) {
         console.error("Unable to copy text", err);
@@ -239,8 +263,9 @@ function FormOrga() {
     e.preventDefault();
     // Create a new FormData object
     const formData = new FormData();
-    if (recaptchaStatus) {
+     {
       // Append all form fields to the formData object
+      formData.append("form", formtype);
       formData.append("orgNameth", orgNameth);
       formData.append("orgNameEn", orgNameEn);
       formData.append("address", address);
@@ -420,20 +445,7 @@ function FormOrga() {
               value={address}
               onChange={(e) => {
                 const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
                 setAddress(inputValue);
-
-                e.target.classList.remove("input-error");
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
-                } else {
-                  // Clear error styles if input is valid
-                  e.target.classList.remove("input-error");
-                }
               }}
             />
 
@@ -869,10 +881,18 @@ function FormOrga() {
             />
           </div>
 
-          <div className={`pay-detail-o ${activeForm === "second-form" ? "active-form" : ""
-            }`}>
+          <div
+            className={`pay-detail-o ${activeForm === "second-form" ? "active-form" : ""
+              }`}
+          >
             <h1>กรุณาชำระค่าสมัครสมาชิก เข้าบัญชีออมทรัพย์</h1>
-            <p>สมาคมพันธกิจสัมพันธ์มหาวิทยาลัยกับสังคม เลขที่ <span id="bank-num" onClick={() => handleCopyClick("3282503717")}>328-250371-7</span> ธนาคารไทยพาณิชย์ สาขาเมืองทองธานี</p>
+            <p>
+              สมาคมพันธกิจสัมพันธ์มหาวิทยาลัยกับสังคม เลขที่{" "}
+              <span id="bank-num" onClick={() => handleCopyClick("3282503717")}>
+                328-250371-7
+              </span>{" "}
+              ธนาคารไทยพาณิชย์ สาขาเมืองทองธานี
+            </p>
             {copyStatus && <div className="copy-status">{copyStatus}</div>}
           </div>
 
@@ -909,6 +929,7 @@ function FormOrga() {
               </div>
             </div>
           </div>
+
           <div
             className={`paym-form ${activeForm === "second-form" ? "active-form" : ""
               }`}
@@ -967,29 +988,14 @@ function FormOrga() {
               value={recAddress}
               onChange={(e) => {
                 const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
                 setRecAddress(inputValue);
-
-                e.target.classList.remove("input-error");
-                // Perform validation
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
-                } else {
-                  // Clear error styles if input is valid
-                  e.target.classList.remove("input-error");
-                }
               }}
             />
           </div>
 
           {activeForm === "first-form" && (
             <div className="btn-container">
-              <GoogleReCaptcha onVerify={handleVerify} />
-              <button id="next" type="button" onClick={handleFirstFormSubmit}>
+              <button id="next" type="button" onClick={handleFirstPagePass}>
                 หน้าถัดไป
               </button>
               <button id="cancel" type="reset" onClick={handleCancel}>
@@ -1001,11 +1007,7 @@ function FormOrga() {
           {activeForm === "second-form" && (
             <div className="btn-container">
               <GoogleReCaptcha onVerify={handleVerify} />
-              <button
-                type="submit" disabled={recaptchaStatus === false}
-              >
-                สมัครสมาชิก
-              </button>
+              <button type="submit" >สมัครสมาชิก</button>
               <button type="button" onClick={handleBack}>
                 ย้อนกลับ
               </button>

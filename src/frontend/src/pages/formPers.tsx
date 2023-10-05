@@ -42,10 +42,10 @@ const FormField: React.FC<FormFieldProps> = ({
 };
 
 function FormPers() {
-  const [recaptchaStatus, setRecaptchaStatus] = useState(false);
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
+  const [formtype] = useState<string>("Individual");
   // Define state variables for registration
   const [registrationResult, setRegistrationResult] = useState<string | null>(
     null
@@ -206,6 +206,7 @@ function FormPers() {
     const formData = new FormData();
 
     // Append all form fields to the formData object
+    formData.append("form", formtype);
     formData.append("Nameth", Nameth);
     formData.append("NameEn", NameEn);
     formData.append("positionSci", positionSci);

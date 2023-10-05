@@ -47,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.38.1",
     "@types/react-document-title": "^2.0.6"
   }
 }
