@@ -7,7 +7,7 @@ import {
 function Tester() {
     const [token, setToken] = useState<string>("");
     const [showCaptcha, setShowCaptcha] = useState(false);
-    const [isButtonDisabled, setButtonDisabled] = useState(false); // State to disable the button
+    const [isButtonDisabled, setButtonDisabled] = useState(false); // State to disable the button 
 
     const handleCaptcha = useCallback(async (value: string) => {
         setToken(value);

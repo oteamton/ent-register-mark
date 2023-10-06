@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Set membership type
-    $data['selectedType'] = isset($_POST['typeA']) ? "สมาชิกตลอกชีพ 100,000 บาท" : 
-                            (isset($_POST['typeB']) ? "สมาชิกราย 3 ปี 30,000 บาท" : "");
+    $data['selectedType'] = isset($_POST['typeA']) ? "สมาชิกตลอกชีพ 100,000 บาท" : (isset($_POST['typeB']) ? "สมาชิกราย 3 ปี 30,000 บาท" : "");
 
     saveData($data);
 
@@ -46,12 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function sendResponse(int $statusCode, array $response) {
+function sendResponse(int $statusCode, array $response)
+{
     http_response_code($statusCode);
     echo json_encode($response);
 }
 
-function saveData(array $data) {
+function saveData(array $data)
+{
     $filename = './db/registration.json';
     $existingData = [];
 
@@ -63,8 +64,9 @@ function saveData(array $data) {
     file_put_contents($filename, json_encode($existingData, JSON_PRETTY_PRINT));
 }
 
-    
-function sendMail() {
+
+function sendMail()
+{
     $mail = new PHPMailer(true);
     try {
         //Server settings
@@ -77,7 +79,7 @@ function sendMail() {
         $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
         $mail->Port = 587; // TCP port to connect to
         http_response_code(200);
-        echo json_encode(["success" => true, "message" => "Data saved and email sent successfully!"]);        
+        echo json_encode(["success" => true, "message" => "Data saved and email sent successfully!"]);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(["success" => false, "message" => "Email sending failed: {$mail->ErrorInfo}"]);

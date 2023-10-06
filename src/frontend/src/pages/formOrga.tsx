@@ -216,14 +216,55 @@ function FormOrga() {
       .then(data => {
         if (data.success) {
           setRecaptchaStatus(true);
+
+          const formData = new FormData();
+          formData.append("form", formtype);
+          formData.append("Nameth", orgNameth);
+          formData.append("NameEn", orgNameEn);
+          formData.append("address", address);
+          formData.append("phone", phone);
+          formData.append("fax", fax);
+          formData.append("contName", contName);
+          formData.append("contEmail", contEmail);
+          formData.append("contLine", contLine);
+          formData.append("repName", repName);
+          formData.append("repPosition", repPosition);
+          formData.append("repAgency", repAgency);
+          formData.append("repPhone", repPhone);
+          formData.append("repFax", repFax);
+          formData.append("repEmail", repEmail);
+          formData.append("repLine", repLine);
+          formData.append("altRepName", altRepName);
+          formData.append("altRepPosition", altRepPosition);
+          formData.append("altRepAgency", altRepAgency);
+          formData.append("altRepPhone", altRepPhone);
+          formData.append("altRepFax", altRepFax);
+          formData.append("altRepEmail", altRepEmail);
+          formData.append("altRepLine", altRepLine);
+          formData.append("selectedType", selectedType);
+          formData.append("recName", recName);
+          formData.append("taxIdNum", taxIdNum);
+          formData.append("recAddress", recAddress);
+          return fetch('http://localhost:8000/form.php', {
+            method: 'POST',
+            body: formData
+          });
         } else {
           console.error('Failed reCAPTCHA verification.');
+          throw new Error('Verification failed');
+        }
+      })
+      .then(response => {
+        if (response && response.ok) {
+          console.log('Form data submitted successfully');
+        } else {
+          console.error('Error submitting form data.');
         }
       })
       .catch(error => {
-        console.error('Error verifying reCAPTCHA token:', error);
+        console.error('Error:', error);
       });
-  }, []);
+    }, [formtype, orgNameth, orgNameEn, address, phone, fax, contName, contEmail, contLine, repName, repPosition, repAgency, repPhone, repFax, repEmail, repLine, altRepName, altRepPosition, altRepAgency, altRepPhone, altRepFax, altRepEmail, altRepLine, selectedType, recName, taxIdNum, recAddress]);
 
   const handleCopyClick = (text: string) => {
     // Using the Clipboard API where supported
@@ -260,12 +301,10 @@ function FormOrga() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Create a new FormData object
-    
   };
 
   return (
-    <GoogleReCaptchaProvider reCaptchaKey="6LevxG8oAAAAAOz7sUG8_oDXcb3GKAH5YnenF1mb">
+    <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}>
       <div className="reg-body">
         <div className="tabs">
           <button
