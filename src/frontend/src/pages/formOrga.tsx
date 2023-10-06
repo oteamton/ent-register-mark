@@ -142,32 +142,31 @@ function FormOrga() {
 
   const handleFirstPagePass = () => {
     // Check if all required fields are filled
-    // if (
-    //   orgNameth.trim() !== "" &&
-    //   orgNameEn.trim() !== "" &&
-    //   address.trim() !== "" &&
-    //   phone.trim() !== "" &&
-    //   fax.trim() !== "" &&
-    //   contName.trim() !== "" &&
-    //   contEmail.trim() !== "" &&
-    //   repName.trim() !== "" &&
-    //   repEmail.trim() !== "" &&
-    //   repAgency.trim() !== "" &&
-    //   repPosition.trim() !== "" &&
-    //   repPhone.trim() !== "" &&
-    //   repFax.trim() !== "" &&
-    //   altRepName.trim() !== "" &&
-    //   altRepEmail.trim() !== "" &&
-    //   altRepPhone.trim() !== "" &&
-    //   altRepPosition.trim() !== "" &&
-    //   altRepAgency.trim() !== ""
-    // ) {
-    //   setCanProceed(true);
-    //   handleButtonClick("second-form", secondFormRef);
-    // } else {
-    //   alert("กรุณากรอกข้อมูลให้ครบ");
-    // }
-    handleButtonClick("second-form", secondFormRef);
+    if (
+      orgNameth.trim() !== "" &&
+      orgNameEn.trim() !== "" &&
+      address.trim() !== "" &&
+      phone.trim() !== "" &&
+      fax.trim() !== "" &&
+      contName.trim() !== "" &&
+      contEmail.trim() !== "" &&
+      repName.trim() !== "" &&
+      repEmail.trim() !== "" &&
+      repAgency.trim() !== "" &&
+      repPosition.trim() !== "" &&
+      repPhone.trim() !== "" &&
+      repFax.trim() !== "" &&
+      altRepName.trim() !== "" &&
+      altRepEmail.trim() !== "" &&
+      altRepPhone.trim() !== "" &&
+      altRepPosition.trim() !== "" &&
+      altRepAgency.trim() !== ""
+    ) {
+      setCanProceed(true);
+      handleButtonClick("second-form", secondFormRef);
+    } else {
+      alert("กรุณากรอกข้อมูลให้ครบ");
+    }
   };
 
   const handleBack = () => {
@@ -262,85 +261,7 @@ function FormOrga() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Create a new FormData object
-    const formData = new FormData();
-     {
-      // Append all form fields to the formData object
-      formData.append("form", formtype);
-      formData.append("orgNameth", orgNameth);
-      formData.append("orgNameEn", orgNameEn);
-      formData.append("address", address);
-      formData.append("phone", phone);
-      formData.append("fax", fax);
-      // Coordinator
-      formData.append("contName", contName);
-      formData.append("contEmail", contEmail);
-      formData.append("contLine", contLine);
-      // Organization representative
-      formData.append("repName", repName);
-      formData.append("repPosition", repPosition);
-      formData.append("repAgency", repAgency);
-      formData.append("repPhone", repPhone);
-      formData.append("repFax", repFax);
-      formData.append("repEmail", repEmail);
-      formData.append("repLine", repLine);
-      // Alternate representative
-      // Append all form fields to the formData object
-      formData.append("orgNameth", orgNameth);
-      formData.append("orgNameEn", orgNameEn);
-      formData.append("address", address);
-      formData.append("phone", phone);
-      formData.append("fax", fax);
-      // Coordinator
-      formData.append("contName", contName);
-      formData.append("contEmail", contEmail);
-      formData.append("contLine", contLine);
-      // Organization representative
-      formData.append("repName", repName);
-      formData.append("repPosition", repPosition);
-      formData.append("repAgency", repAgency);
-      formData.append("repPhone", repPhone);
-      formData.append("repFax", repFax);
-      formData.append("repEmail", repEmail);
-      formData.append("repLine", repLine);
-      // Alternate representative
-      formData.append("altRepName", altRepName);
-      formData.append("altRepPosition", altRepPosition);
-      formData.append("altRepAgency", altRepAgency);
-      formData.append("altRepPhone", altRepPhone);
-      formData.append("altRepFax", altRepFax);
-      formData.append("altRepEmail", altRepEmail);
-      formData.append("altRepLine", altRepLine);
-      // Types of Registration
-      if (typeA) {
-        formData.append("typeA", "setTypeA");
-      }
-      if (typeB) {
-        formData.append("typeB", "setTypeB");
-      }
-      // Payment
-      formData.append("recName", recName);
-      formData.append("taxIdNum", taxIdNum);
-      formData.append("recAddress", recAddress);
-    }
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/form.php",
-        formData
-      );
-      if (response.status === 200) {
-        setRegistrationResult("Registration successful!");
-        // Registration successful, redirect to a success page
-        window.location.href = "/success";
-      } else if (response.status === 400) {
-        setRegistrationResult("Registration failed.");
-        // Display an error message to the user
-        window.location.href = "/failed";
-        console.error("Registration failed.");
-      }
-    } catch (error) {
-      window.location.href = "/failed";
-      console.error("Error:", error);
-    }
+    
   };
 
   return (
