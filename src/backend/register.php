@@ -31,4 +31,3 @@ if (intval($responseKeys["success"]) === 1) {
     error_log("reCAPTCHA verification failed.");
     echo json_encode(["success" => false, "message" => "reCAPTCHA verification failed"]);
 }
-
