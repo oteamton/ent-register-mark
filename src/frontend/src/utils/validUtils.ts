@@ -16,4 +16,8 @@ export const isValidEmail = (email: string) => {
     const thaiRegex = /^[ก-ฮ\s]*$/;
     return thaiRegex.test(input);
   };
-  
+
+  export const validPhone = (input: string) => {
+    const pattern = /^0[0-9]-{2}-[0-9]{3}-[0-9]{4}$/;
+    return pattern.test(input);
+  }

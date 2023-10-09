@@ -6,6 +6,7 @@ import {
   GoogleReCaptchaProvider,
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
+import { validPhone } from "../utils/validUtils";
 
 // Define a function component for the form field
 interface FormFieldProps {
@@ -459,17 +460,31 @@ function FormPers() {
               type="text"
               value={instPhone}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
-                setInstPhone(inputValue);
+                let inputValue = e.target.value;
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+                
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
+                setPhone(inputValue);
+
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter a valid phone number.");
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -479,17 +494,31 @@ function FormPers() {
               type="text"
               value={instFax}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
-                setInstFax(inputValue);
+                let inputValue = e.target.value;
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+                
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
+                setPhone(inputValue);
+
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter a valid fax number.");
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -526,17 +555,31 @@ function FormPers() {
               type="text"
               value={phone}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+                
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setPhone(inputValue);
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Invalid input. Please enter number only.");
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}

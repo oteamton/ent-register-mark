@@ -21,11 +21,11 @@ function Tester() {
             },
             body: JSON.stringify({ token: value })
         });
-
         const responseData = await response.json();
 
         if (responseData.success) {
             // Do something on success, maybe navigate to another page or show a message
+            
         } else {
             setButtonDisabled(false); // Enable the button again on failure
         }

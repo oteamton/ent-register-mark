@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     saveData($data);
 
     try {
-        sendMail();
+        sendMail($data);
         sendResponse(200, ["success" => true, "message" => "Data saved and email sent successfully!"]);
     } catch (Exception $e) {
         sendResponse(500, ["success" => false, "message" => "Email sending failed: {$e->getMessage()}"]);
@@ -64,24 +64,53 @@ function saveData(array $data)
     file_put_contents($filename, json_encode($existingData, JSON_PRETTY_PRINT));
 }
 
-
-function sendMail()
+function sendMail($data)
 {
+    // Construct email body
+    $emailBody = "<h2>Details submitted:\n</h2><ul>";
+    foreach ($data as $key => $value) {
+        $emailBody .= "<li><strong>" . ucfirst($key) . "</strong>" . ": " . htmlspecialchars($value) . "</li>";
+    }
+    $emailBody .= "</ul>";
+
     $mail = new PHPMailer(true);
     try {
         //Server settings
-        $mail->SMTPDebug = 0; // Enable verbose debug output
+        $mail->SMTPDebug = 2; // Enable verbose debug output
         $mail->isSMTP(); // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com'; // Specify main and backup SMTP servers
+        $mail->Port = 465; // TCP port to connect to
+        $mail->SMTPSecure = 'ssl'; // Enable TLS encryption, `ssl` also accepted
         $mail->SMTPAuth = true; // Enable SMTP authentication
-        $mail->Username = 'your_email'; // SMTP username
-        $mail->Password = 'your_password'; // SMTP password
-        $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = 587; // TCP port to connect to
+        $mail->Username = $_ENV['MAIL_USERNAME']; // SMTP username
+        $mail->Password = $_ENV['MAIL_PASSWORD']; // SMTP password
+
+        //to Engagement Admin
+        $mail->setFrom($_ENV['MAIL_USERNAME'], 'SWU');
+        $mail->addAddress('admin@gmail.com', 'Admin'); // Add a recipient
+        $mail->Subject = 'Ent Registration';
+        $mail->Body = $emailBody;
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+        $mail->send();
+
+        // Reset properties
+        $mail->clearAddresses();
+        $mail->clearCCs();
+        $mail->clearBCCs();
+        $mail->clearAttachments();
+
+        // To Applicant
+        $mail->setFrom($_ENV['MAIL_USERNAME'], 'SWU');
+        $mail->addAddress($data['contEmail'], 'Registered User'); // Add a recipient
+        $mail->Subject = 'Engagementthailand Registration';
+        $mail->Body = '<b>Thank you for registering!</b></n>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+        $mail->send();
+
         http_response_code(200);
         echo json_encode(["success" => true, "message" => "Data saved and email sent successfully!"]);
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(["success" => false, "message" => "Email sending failed: {$mail->ErrorInfo}"]);
+        echo json_encode(["failed" => false, "message" => "Email sending failed: {$mail->ErrorInfo}"]);
     }
 }

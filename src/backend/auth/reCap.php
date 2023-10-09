@@ -20,7 +20,6 @@ if (!$token) {
     exit();
 }
 
-$secretKey = $_ENV['RE_CAPTCHA_SECRET_KEY'];
 $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secretKey}&response={$token}");
 $responseKeys = json_decode($verifyResponse, true);
 

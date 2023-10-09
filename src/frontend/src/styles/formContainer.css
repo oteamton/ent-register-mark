@@ -5,6 +5,7 @@
   align-items: flex-start;
   flex-wrap: wrap; /* Wrap items to the next line if the screen is narrow */
   font-family: "Kanit";
+  text-align: center;
 }
 
 .bc {
@@ -90,6 +91,15 @@ li{
 
 #per-btn:hover {
   background-color: #e5a900; /* This is a slightly darker shade. Adjust as needed. */
+}
+
+hr{
+  width: 70%;
+  height: 5px;
+  background-color: #54595F;
+  border: none;
+  border-radius: 50px;
+  margin-bottom: 1rem;
 }
 
 /* Add responsive styles for smaller screens if necessary */

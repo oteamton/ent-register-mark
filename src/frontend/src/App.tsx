@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import FormOrga from "./pages/formOrga";
 import FormPers from "./pages/formPers";
 import FormContainer from "./pages/formContainer";
+import Tester from "./pages/test";
 
 export function AppWithoutRouter() {
   return (
@@ -11,6 +12,7 @@ export function AppWithoutRouter() {
         <Route path="/OrganizationForm" element={<FormOrga />} />
         <Route path="/IndividualForm" element={<FormPers />} />
         <Route path="/" element={<FormContainer />} />
+        <Route path="/tester" element={<Tester />} />
       </Routes>
     </div>
   );

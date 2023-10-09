@@ -6,6 +6,7 @@ import {
   GoogleReCaptchaProvider,
   GoogleReCaptcha,
 } from "react-google-recaptcha-v3";
+import { validPhone } from "../utils/validUtils";
 
 // Define a function component for the form field
 interface FormFieldProps {
@@ -40,6 +41,7 @@ const FormField: React.FC<FormFieldProps> = ({
 
 function FormOrga() {
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
+  const [token, setToken] = useState<string>("");
   const [recaptchaStatus, setRecaptchaStatus] = useState(false);
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
@@ -143,24 +145,24 @@ function FormOrga() {
   const handleFirstPagePass = () => {
     // Check if all required fields are filled
     if (
-      orgNameth.trim() !== "" &&
-      orgNameEn.trim() !== "" &&
-      address.trim() !== "" &&
-      phone.trim() !== "" &&
-      fax.trim() !== "" &&
-      contName.trim() !== "" &&
-      contEmail.trim() !== "" &&
-      repName.trim() !== "" &&
-      repEmail.trim() !== "" &&
-      repAgency.trim() !== "" &&
-      repPosition.trim() !== "" &&
-      repPhone.trim() !== "" &&
-      repFax.trim() !== "" &&
-      altRepName.trim() !== "" &&
-      altRepEmail.trim() !== "" &&
-      altRepPhone.trim() !== "" &&
-      altRepPosition.trim() !== "" &&
-      altRepAgency.trim() !== ""
+      // orgNameth.trim() !== "" &&
+      // orgNameEn.trim() !== "" &&
+      // address.trim() !== "" &&
+      // phone.trim() !== "" &&
+      // fax.trim() !== "" &&
+      // contName.trim() !== "" &&
+      contEmail.trim() !== ""
+      // repName.trim() !== "" &&
+      // repEmail.trim() !== "" &&
+      // repAgency.trim() !== "" &&
+      // repPosition.trim() !== "" &&
+      // repPhone.trim() !== "" &&
+      // repFax.trim() !== "" &&
+      // altRepName.trim() !== "" &&
+      // altRepEmail.trim() !== "" &&
+      // altRepPhone.trim() !== "" &&
+      // altRepPosition.trim() !== "" &&
+      // altRepAgency.trim() !== ""
     ) {
       setCanProceed(true);
       handleButtonClick("second-form", secondFormRef);
@@ -202,21 +204,21 @@ function FormOrga() {
     setRecAddress("");
   };
 
-  const handleVerify = useCallback((token: string
+  const handleVerify = useCallback((value: string
   ) => {
+    setToken(value);
+    console.log("Captcha Token:", value);
     // Send token to your PHP backend for verification
-    fetch('http://localhost:8000/form.php', {
+    fetch('http://localhost:8000/auth/reCap.php', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/json"
       },
-      body: `recaptchaToken=${token}`
+      body: JSON.stringify({ recaptchaToken: value })
     })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          setRecaptchaStatus(true);
-
           const formData = new FormData();
           formData.append("form", formtype);
           formData.append("Nameth", orgNameth);
@@ -256,6 +258,7 @@ function FormOrga() {
       })
       .then(response => {
         if (response && response.ok) {
+          setRegistrationResult('Registered successfully! Wait for administrator to approve.');
           console.log('Form data submitted successfully');
         } else {
           console.error('Error submitting form data.');
@@ -264,7 +267,7 @@ function FormOrga() {
       .catch(error => {
         console.error('Error:', error);
       });
-    }, [formtype, orgNameth, orgNameEn, address, phone, fax, contName, contEmail, contLine, repName, repPosition, repAgency, repPhone, repFax, repEmail, repLine, altRepName, altRepPosition, altRepAgency, altRepPhone, altRepFax, altRepEmail, altRepLine, selectedType, recName, taxIdNum, recAddress]);
+  }, [formtype, orgNameth, orgNameEn, address, phone, fax, contName, contEmail, contLine, repName, repPosition, repAgency, repPhone, repFax, repEmail, repLine, altRepName, altRepPosition, altRepAgency, altRepPhone, altRepFax, altRepEmail, altRepLine, selectedType, recName, taxIdNum, recAddress]);
 
   const handleCopyClick = (text: string) => {
     // Using the Clipboard API where supported
@@ -301,6 +304,7 @@ function FormOrga() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    handleVerify(token);
   };
 
   return (
@@ -414,19 +418,31 @@ function FormOrga() {
               type="text"
               value={phone}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setPhone(inputValue);
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -436,19 +452,31 @@ function FormOrga() {
               type="text"
               value={fax}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setFax(inputValue);
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -600,17 +628,31 @@ function FormOrga() {
               type="text"
               value={repPhone}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setRepPhone(inputValue);
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Plese enter a valid phone number.");
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -620,19 +662,31 @@ function FormOrga() {
               type="text"
               value={repFax}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setRepFax(inputValue);
 
-                e.target.classList.remove("input-error");
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -758,20 +812,31 @@ function FormOrga() {
               type="text"
               value={altRepPhone}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setAltRepPhone(inputValue);
 
-                e.target.classList.remove("input-error");
-                // Perform validation
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -781,20 +846,31 @@ function FormOrga() {
               type="text"
               value={altRepFax}
               onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                let inputValue = e.target.value;
+
+                // Removing non-numeric characters
+                inputValue = inputValue.replace(/\D/g, "");
+
+                // Auto-insert hyphens
+                if (inputValue.length > 6) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                } else if (inputValue.length > 3) {
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                }
+
+                if (inputValue.length > 12) {
+                  inputValue = inputValue.slice(0, 12);
+                }
+
+                const isPhone = validPhone(inputValue)
+
                 setAltRepFax(inputValue);
 
-                e.target.classList.remove("input-error");
-                // Perform validation
-                if (!isValidNum) {
+                if (!isPhone && inputValue.length !== 12) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
+                  console.log("Please enter valid phone numbers");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -809,13 +885,10 @@ function FormOrga() {
                 setAltRepEmail(inputValue);
 
                 e.target.classList.remove("input-error");
-                // Perform validation
                 if (!isValidMail) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
+                  console.log("Please enter a valid email address.");
                 } else {
                   // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
@@ -966,7 +1039,6 @@ function FormOrga() {
 
           {activeForm === "second-form" && (
             <div className="btn-container">
-              <GoogleReCaptcha onVerify={handleVerify} />
               <button type="submit" >สมัครสมาชิก</button>
               <button type="button" onClick={handleBack}>
                 ย้อนกลับ
