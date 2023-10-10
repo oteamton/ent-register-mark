@@ -41,8 +41,7 @@ const FormField: React.FC<FormFieldProps> = ({
 
 function FormOrga() {
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
-  const [token, setToken] = useState<string>("");
-  const [recaptchaStatus, setRecaptchaStatus] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
@@ -204,70 +203,35 @@ function FormOrga() {
     setRecAddress("");
   };
 
-  const handleVerify = useCallback((value: string
-  ) => {
+  const handleCaptcha = useCallback(async (value: string) => {
     setToken(value);
-    console.log("Captcha Token:", value);
-    // Send token to your PHP backend for verification
-    fetch('http://localhost:8000/auth/reCap.php', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ recaptchaToken: value })
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          const formData = new FormData();
-          formData.append("form", formtype);
-          formData.append("Nameth", orgNameth);
-          formData.append("NameEn", orgNameEn);
-          formData.append("address", address);
-          formData.append("phone", phone);
-          formData.append("fax", fax);
-          formData.append("contName", contName);
-          formData.append("contEmail", contEmail);
-          formData.append("contLine", contLine);
-          formData.append("repName", repName);
-          formData.append("repPosition", repPosition);
-          formData.append("repAgency", repAgency);
-          formData.append("repPhone", repPhone);
-          formData.append("repFax", repFax);
-          formData.append("repEmail", repEmail);
-          formData.append("repLine", repLine);
-          formData.append("altRepName", altRepName);
-          formData.append("altRepPosition", altRepPosition);
-          formData.append("altRepAgency", altRepAgency);
-          formData.append("altRepPhone", altRepPhone);
-          formData.append("altRepFax", altRepFax);
-          formData.append("altRepEmail", altRepEmail);
-          formData.append("altRepLine", altRepLine);
-          formData.append("selectedType", selectedType);
-          formData.append("recName", recName);
-          formData.append("taxIdNum", taxIdNum);
-          formData.append("recAddress", recAddress);
-          return fetch('http://localhost:8000/form.php', {
-            method: 'POST',
-            body: formData
-          });
-        } else {
-          console.error('Failed reCAPTCHA verification.');
-          throw new Error('Verification failed');
-        }
-      })
-      .then(response => {
-        if (response && response.ok) {
-          setRegistrationResult('Registered successfully! Wait for administrator to approve.');
-          console.log('Form data submitted successfully');
-        } else {
-          console.error('Error submitting form data.');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
+    console.log("Captcha Token:", value);  // Logging the token
+
+    try {
+      // Send result to your backend for verification
+      const response = await fetch("http://localhost:8000/auth/reCap.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token: value })
       });
-  }, [formtype, orgNameth, orgNameEn, address, phone, fax, contName, contEmail, contLine, repName, repPosition, repAgency, repPhone, repFax, repEmail, repLine, altRepName, altRepPosition, altRepAgency, altRepPhone, altRepFax, altRepEmail, altRepLine, selectedType, recName, taxIdNum, recAddress]);
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        console.log(responseData.message); // Or inform the user about the successful verification.
+      } else {
+        console.error(responseData.message); // Or inform the user about the failed verification.
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Captcha verification failed:", error.message);
+      } else {
+        console.error("Captcha verification failed:", error);
+      }
+    }
+  }, []);
 
   const handleCopyClick = (text: string) => {
     // Using the Clipboard API where supported
@@ -304,11 +268,69 @@ function FormOrga() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleVerify(token);
-  };
+    try {
+      if (token) {
+        console.log("Captcha Token:", token);
+        const formData = new FormData();
+        formData.append("recaptchaToken", token);
+        formData.append("form", formtype);
+        formData.append("orgNameth", orgNameth);
+        formData.append("orgNameEn", orgNameEn);
+        formData.append("address", address);
+        formData.append("phone", phone);
+        formData.append("fax", fax);
+        formData.append("contName", contName);
+        formData.append("contEmail", contEmail);
+        formData.append("contLine", contLine);
+        formData.append("repName", repName);
+        formData.append("repEmail", repEmail);
+        formData.append("repAgency", repAgency);
+        formData.append("repPosition", repPosition);
+        formData.append("repPhone", repPhone);
+        formData.append("repFax", repFax);
+        formData.append("repLine", repLine);
+        formData.append("altRepName", altRepName);
+        formData.append("altRepEmail", altRepEmail);
+        formData.append("altRepPhone", altRepPhone);
+        formData.append("altRepPosition", altRepPosition);
+        formData.append("altRepAgency", altRepAgency);
+        formData.append("altRepFax", altRepFax);
+        formData.append("altRepLine", altRepLine);
+        formData.append("recName", recName);
+        formData.append("taxIdNum", taxIdNum);
+        formData.append("recAddress", recAddress);
+        // Append membership types if they exist
+        if (typeA) {
+          formData.append("typeA", "setTypeA");
+        }
+        if (typeB) {
+          formData.append("typeB", "setTypeB");
+        }
 
+        const response = await fetch(
+          "http://localhost:8000/form.php", {
+          method: "POST",
+          body: formData,
+        });
+
+        const responseData = await response.json();
+        if (responseData.success) {
+          console.log("Form submitted successfully");
+        } else {
+          console.error("Form submission failed");
+        }
+      } else {
+        console.error("No Captcha token");
+      }
+    } catch (error) {
+      console.error("Failed to parse JSON response:", error);
+    }
+  };
+  
   return (
-    <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}>
+    <GoogleReCaptchaProvider
+      reCaptchaKey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}
+    >
       <div className="reg-body">
         <div className="tabs">
           <button
@@ -425,16 +447,21 @@ function FormOrga() {
 
                 // Auto-insert hyphens
                 if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3,
+                    6
+                  )}-${inputValue.slice(6)}`;
                 } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3
+                  )}`;
                 }
 
                 if (inputValue.length > 12) {
                   inputValue = inputValue.slice(0, 12);
                 }
 
-                const isPhone = validPhone(inputValue)
+                const isPhone = validPhone(inputValue);
 
                 setPhone(inputValue);
 
@@ -459,16 +486,21 @@ function FormOrga() {
 
                 // Auto-insert hyphens
                 if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3,
+                    6
+                  )}-${inputValue.slice(6)}`;
                 } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3
+                  )}`;
                 }
 
                 if (inputValue.length > 12) {
                   inputValue = inputValue.slice(0, 12);
                 }
 
-                const isPhone = validPhone(inputValue)
+                const isPhone = validPhone(inputValue);
 
                 setFax(inputValue);
 
@@ -635,16 +667,21 @@ function FormOrga() {
 
                 // Auto-insert hyphens
                 if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3,
+                    6
+                  )}-${inputValue.slice(6)}`;
                 } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3
+                  )}`;
                 }
 
                 if (inputValue.length > 12) {
                   inputValue = inputValue.slice(0, 12);
                 }
 
-                const isPhone = validPhone(inputValue)
+                const isPhone = validPhone(inputValue);
 
                 setRepPhone(inputValue);
 
@@ -669,16 +706,21 @@ function FormOrga() {
 
                 // Auto-insert hyphens
                 if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3,
+                    6
+                  )}-${inputValue.slice(6)}`;
                 } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3
+                  )}`;
                 }
 
                 if (inputValue.length > 12) {
                   inputValue = inputValue.slice(0, 12);
                 }
 
-                const isPhone = validPhone(inputValue)
+                const isPhone = validPhone(inputValue);
 
                 setRepFax(inputValue);
 
@@ -819,16 +861,21 @@ function FormOrga() {
 
                 // Auto-insert hyphens
                 if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3,
+                    6
+                  )}-${inputValue.slice(6)}`;
                 } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3
+                  )}`;
                 }
 
                 if (inputValue.length > 12) {
                   inputValue = inputValue.slice(0, 12);
                 }
 
-                const isPhone = validPhone(inputValue)
+                const isPhone = validPhone(inputValue);
 
                 setAltRepPhone(inputValue);
 
@@ -853,16 +900,21 @@ function FormOrga() {
 
                 // Auto-insert hyphens
                 if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3,
+                    6
+                  )}-${inputValue.slice(6)}`;
                 } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
+                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(
+                    3
+                  )}`;
                 }
 
                 if (inputValue.length > 12) {
                   inputValue = inputValue.slice(0, 12);
                 }
 
-                const isPhone = validPhone(inputValue)
+                const isPhone = validPhone(inputValue);
 
                 setAltRepFax(inputValue);
 
@@ -1039,13 +1091,13 @@ function FormOrga() {
 
           {activeForm === "second-form" && (
             <div className="btn-container">
-              <button type="submit" >สมัครสมาชิก</button>
+              <button type="submit">สมัครสมาชิก</button>
               <button type="button" onClick={handleBack}>
                 ย้อนกลับ
               </button>
             </div>
           )}
-
+          <GoogleReCaptcha onVerify={handleCaptcha} />
           <div>
             {registrationResult && (
               <p className="registration-result">{registrationResult}</p>

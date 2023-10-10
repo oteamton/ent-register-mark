@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 // Set the CORS headers
-header("Content-Type: application/json;charset=UTF-8");
+header("Content-Type: application/json; charset=utf-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -17,19 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $requiredFields = [
         'form',
-        'orgNameth', 'orgNameEn', 'address', 'phone', 'fax', 'contName', 'contEmail',
-        'repName', 'repPosition', 'repAgency', 'repFax', 'repPhone', 'repEmail',
-        'altRepName', 'altRepPosition', 'altRepAgency', 'altRepFax', 'altRepPhone', 'altRepEmail',
-        'selectedType', 'recName', 'taxIdNum', 'recAddress'
+        'orgNameth', 'orgNameEn', 'address', 'phone', 'fax', 'contName', 'contEmail', 'contLine',
+        'repName', 'repPosition', 'repAgency', 'repFax', 'repPhone', 'repEmail', 'repLine',
+        'altRepName', 'altRepPosition', 'altRepAgency', 'altRepFax', 'altRepPhone', 'altRepEmail', 'altRepLine',
+        'recName', 'taxIdNum', 'recAddress', 'recaptchaToken'
     ];
 
     $data = [];
     foreach ($requiredFields as $field) {
-        if (empty($_POST[$field])) {
-            sendResponse(400, ["success" => false, "message" => "Error: Missing value for $field."]);
-            exit();
-        }
-        $data[$field] = $_POST[$field];
+        $data[$field] = $_POST[$field] ?? '';
     }
 
     // Set membership type
@@ -53,16 +49,54 @@ function sendResponse(int $statusCode, array $response)
 
 function saveData(array $data)
 {
-    $filename = './db/registration.json';
+    $filename = './db/Ent_membs.JSON';
     $existingData = [];
 
-    if (file_exists($filename)) {
-        $existingData = json_decode(file_get_contents($filename), true);
+    // Sanitize the input data
+    array_walk_recursive($data, function (&$item) {
+        $item = htmlspecialchars($item, ENT_QUOTES, 'UTF-8');
+    });
+
+    $handle = fopen($filename, 'c+');
+    if ($handle === false) {
+        // Handle error - can't open file
+        error_log("Error: Unable to open the file: $filename");
+        return false;
     }
 
-    $existingData[] = $data;
-    file_put_contents($filename, json_encode($existingData, JSON_PRETTY_PRINT));
+    if (flock($handle, LOCK_EX)) {  // Acquire an exclusive lock
+        if (file_exists($filename) && filesize($filename) > 0) {
+            $existingData = json_decode(fread($handle, filesize($filename)), true);
+            if ($existingData === null) {
+                // Handle error - couldn't decode the JSON
+                error_log("Error: Unable to decode the JSON data from $filename");
+                fclose($handle);
+                return false;
+            }
+        }
+
+        $existingData[] = $data;
+        ftruncate($handle, 0);  // Truncate the file to zero size
+        // Apply JSON_UNESCAPED_UNICODE along with JSON_PRETTY_PRINT
+        if (fwrite($handle, json_encode($existingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) === false) {
+            // Handle error - couldn't write to the file
+            error_log("Error: Unable to write data to $filename");
+            fclose($handle);
+            return false;
+        }
+        fflush($handle);       // Flush output before releasing the lock
+        flock($handle, LOCK_UN);  // Release the lock
+    } else {
+        // Handle error - couldn't lock the file
+        error_log("Error: Unable to acquire a lock on $filename");
+        fclose($handle);
+        return false;
+    }
+
+    fclose($handle);
+    return true;
 }
+
 
 function sendMail($data)
 {
@@ -76,7 +110,7 @@ function sendMail($data)
     $mail = new PHPMailer(true);
     try {
         //Server settings
-        $mail->SMTPDebug = 2; // Enable verbose debug output
+        $mail->SMTPDebug = 0; // Enable verbose debug output
         $mail->isSMTP(); // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com'; // Specify main and backup SMTP servers
         $mail->Port = 465; // TCP port to connect to
@@ -87,7 +121,7 @@ function sendMail($data)
 
         //to Engagement Admin
         $mail->setFrom($_ENV['MAIL_USERNAME'], 'SWU');
-        $mail->addAddress('admin@gmail.com', 'Admin'); // Add a recipient
+        $mail->addAddress('zelazideqc@gmail.com', 'Admin'); // Add a recipient
         $mail->Subject = 'Ent Registration';
         $mail->Body = $emailBody;
         $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
@@ -109,8 +143,10 @@ function sendMail($data)
 
         http_response_code(200);
         echo json_encode(["success" => true, "message" => "Data saved and email sent successfully!"]);
+        exit();
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(["failed" => false, "message" => "Email sending failed: {$mail->ErrorInfo}"]);
+        exit();
     }
 }
