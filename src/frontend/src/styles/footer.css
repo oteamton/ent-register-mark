@@ -1,0 +1,27 @@
+.footer {
+    font-family: 'Kanit';
+    background-color: #26265F;
+    color: white;
+    padding: 30px 20px;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-start, .footer-end {
+    flex: 1;
+    text-align: center;
+}
+
+.footer-start {
+    text-align: left;
+}
+
+.footer-end {
+    text-align: right;
+}

@@ -41,7 +41,7 @@
 /* Form */
 .form {
   display: -ms-flexbox;
-  height: 100vh;
+  height: 100%;
   font-size: 1rem;
   font-family: "Kanit", sans-serif;
   background-color: #ffffff;
@@ -358,6 +358,11 @@ span:hover {
     width: 50%;
     /* Full width for buttons on smaller screens */
   }
+}
+
+Footer{
+  position: relative;
+  bottom: 0;
 }
 
 @media (max-width: 768px) {

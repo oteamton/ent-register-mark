@@ -1,0 +1,16 @@
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgb(103, 177, 250);
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+}
+
+#dotContainer canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}

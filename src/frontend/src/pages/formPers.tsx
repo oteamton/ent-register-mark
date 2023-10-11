@@ -1,12 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import "../styles/form.css";
 import "../styles/fonts.css";
-import axios from "axios";
 import {
-  GoogleReCaptchaProvider,
-  GoogleReCaptcha,
+  GoogleReCaptcha
 } from "react-google-recaptcha-v3";
-import { validPhone } from "../utils/validUtils";
+import {
+  validPhone,
+  isEmpty,
+  isThaiOnly,
+  isEngOnly,
+  ValidEmail,
+  numOnly,
+} from "../utils/validUtils";
 
 // Define a function component for the form field
 interface FormFieldProps {
@@ -14,7 +19,6 @@ interface FormFieldProps {
   type: string;
   value: string;
   placeholder?: string;
-  readOnly?: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -24,10 +28,8 @@ const FormField: React.FC<FormFieldProps> = ({
   type,
   value,
   placeholder,
-  readOnly,
   onChange,
 }) => {
-  const [inputReadOnly, setInputReadOnly] = useState(readOnly || false);
   return (
     <div className="input-container">
       <label>{label} :</label>
@@ -35,7 +37,6 @@ const FormField: React.FC<FormFieldProps> = ({
         type={type}
         value={value}
         placeholder={placeholder}
-        readOnly={inputReadOnly}
         onChange={onChange}
       />
     </div>
@@ -43,6 +44,8 @@ const FormField: React.FC<FormFieldProps> = ({
 };
 
 function FormPers() {
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
@@ -77,24 +80,6 @@ function FormPers() {
   const [recName, setRecName] = useState("");
   const [taxIdNum, setTaxIdNum] = useState("");
   const [recAddress, setRecAddress] = useState("");
-
-  const isThaiOnly = (inputValue: string) => {
-    const thaiRegex = /^[ก-๏\s]*$/;
-    return thaiRegex.test(inputValue);
-  };
-  const isEmail = (inputValue: string) => {
-    const emailRegex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return emailRegex.test(inputValue);
-  };
-  const isEngOnly = (inputValue: string) => {
-    const englishRegex = /^[a-zA-Z\s]*$/;
-    return englishRegex.test(inputValue);
-  };
-  const isNumOnly = (inputValue: string) => {
-    const numRegex = /^[0-9\s]*$/;
-    return numRegex.test(inputValue);
-  };
 
   const handleButtonClick = (
     formName: string,
@@ -175,14 +160,49 @@ function FormPers() {
     setRecAddress("");
   };
 
+  const handleCaptcha = useCallback(async (value: string) => {
+    setToken(value);
+    try {
+      // Send result to your backend for verification
+      const response = await fetch("http://localhost:8000/auth/reCap.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: value }),
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        console.log(responseData.message); // Or inform the user about the successful verification.
+      } else {
+        console.error(responseData.message); // Or inform the user about the failed verification.
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Captcha verification failed:", error.message);
+      } else {
+        console.error("Captcha verification failed:", error);
+      }
+    }
+  }, []);
+
   const handleCopyClick = (text: string) => {
     // Using the Clipboard API where supported
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => {
-        console.log("Text copied to clipboard");
-      }).catch(err => {
-        console.error("Unable to copy text", err);
-      });
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setCopyStatus("Copied to clipboard!");
+          console.log("Text copied to clipboard");
+          setTimeout(() => {
+            setCopyStatus(null); // Clear the copy status after 3 seconds
+          }, 3000);
+        })
+        .catch((err) => {
+          console.error("Unable to copy text", err);
+        });
     } else {
       // Fallback to older method for older browsers
       const textArea = document.createElement("textarea");
@@ -191,7 +211,7 @@ function FormPers() {
       textArea.focus();
       textArea.select();
       try {
-        document.execCommand('copy');
+        document.execCommand("copy");
         console.log("Text copied to clipboard");
       } catch (err) {
         console.error("Unable to copy text", err);
@@ -203,60 +223,57 @@ function FormPers() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Create a new FormData object
-    const formData = new FormData();
-
-    // Append all form fields to the formData object
-    formData.append("form", formtype);
-    formData.append("Nameth", Nameth);
-    formData.append("NameEn", NameEn);
-    formData.append("positionSci", positionSci);
-    formData.append("positionBus", positionBus);
-    formData.append("address", address);
-    formData.append("phone", phone);
-    formData.append("fax", instFax);
-    formData.append("email", email);
-    formData.append("lineID", lineID);
-    formData.append("instName", instName);
-    formData.append("instNameEn", instNameEn);
-    formData.append("instAddress", instAddress);
-    formData.append("instPhone", instPhone);
-    formData.append("instFax", instFax);
-    // Types of Registration
-    if (typeA) {
-      formData.append("typeA", "setTypeA");
-    }
-    if (typeB) {
-      formData.append("typeB", "setTypeB");
-    }
-    // Payment
-    formData.append("recName", recName);
-    formData.append("taxIdNum", taxIdNum);
-    formData.append("recAddress", recAddress);
-
     try {
-      const response = await axios.post(
-        "http://localhost:8000/form.php",
-        formData
-      );
-      if (response.status === 200) {
-        setRegistrationResult("Registration successful!");
-        // Registration successful, redirect to a success page
-        window.location.href = "/success";
-      } else if (response.status === 400) {
-        setRegistrationResult("Registration failed.");
-        // Display an error message to the user
-        window.location.href = "/failed";
-        console.error("Registration failed.");
+      if (token) {
+        const formData = new FormData();
+        formData.append("form", formtype);
+        formData.append("Nameth", Nameth);
+        formData.append("NameEn", NameEn);
+        formData.append("positionSci", positionSci);
+        formData.append("positionBus", positionBus);
+        formData.append("address", address);
+        formData.append("phone", phone);
+        formData.append("fax", instFax);
+        formData.append("email", email);
+        formData.append("lineID", lineID);
+        formData.append("instName", instName);
+        formData.append("instNameEn", instNameEn);
+        formData.append("instAddress", instAddress);
+        formData.append("instPhone", instPhone);
+        formData.append("instFax", instFax);
+        // Types of Registration
+        if (typeA) {
+          formData.append("typeA", "setTypeA");
+        }
+        if (typeB) {
+          formData.append("typeB", "setTypeB");
+        }
+        // Payment
+        formData.append("recName", recName);
+        formData.append("taxIdNum", taxIdNum);
+        formData.append("recAddress", recAddress);
+
+        const response = await fetch("http://localhost:8000/form.php", {
+          method: "POST",
+          body: formData,
+        });
+
+        const responseData = await response.json();
+        if (responseData.success) {
+          console.log("Form submitted successfully");
+        } else {
+          console.error("Form submission failed");
+        }
+      } else {
+        console.error("No Captcha token");
       }
     } catch (error) {
-      window.location.href = "/failed";
-      console.error("Error:", error);
+      console.error("Failed to parse JSON response:", error);
     }
   };
 
   return (
-    <GoogleReCaptchaProvider reCaptchaKey="6LevxG8oAAAAAOz7sUG8_oDXcb3GKAH5YnenF1mb">
+    
       <div className="reg-body">
         <div className="tabs">
           <button
@@ -314,11 +331,7 @@ function FormPers() {
                 if (!isValidThai) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -336,11 +349,7 @@ function FormPers() {
                 if (!isValidEng) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -358,11 +367,7 @@ function FormPers() {
                 if (!isValidThai) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -381,11 +386,7 @@ function FormPers() {
                 if (!isValidThai) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -410,11 +411,7 @@ function FormPers() {
                 if (!isValidThai) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -432,9 +429,7 @@ function FormPers() {
                 if (!isValidEng) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter a valid email address.");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -460,30 +455,12 @@ function FormPers() {
               type="text"
               value={instPhone}
               onChange={(e) => {
-                let inputValue = e.target.value;
+                const [isPhone, cleanValue] = validPhone(e.target.value);
+                setInstPhone(cleanValue);
 
-                // Removing non-numeric characters
-                inputValue = inputValue.replace(/\D/g, "");
-                
-                // Auto-insert hyphens
-                if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
-                } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
-                }
-
-                if (inputValue.length > 12) {
-                  inputValue = inputValue.slice(0, 12);
-                }
-
-                const isPhone = validPhone(inputValue)
-
-                setPhone(inputValue);
-
-                if (!isPhone && inputValue.length !== 12) {
+                if (!isPhone) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter valid phone numbers");
                 } else {
                   e.target.classList.remove("input-error");
                 }
@@ -494,30 +471,12 @@ function FormPers() {
               type="text"
               value={instFax}
               onChange={(e) => {
-                let inputValue = e.target.value;
+                const [isPhone, cleanValue] = validPhone(e.target.value);
+                setInstPhone(cleanValue);
 
-                // Removing non-numeric characters
-                inputValue = inputValue.replace(/\D/g, "");
-                
-                // Auto-insert hyphens
-                if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
-                } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
-                }
-
-                if (inputValue.length > 12) {
-                  inputValue = inputValue.slice(0, 12);
-                }
-
-                const isPhone = validPhone(inputValue)
-
-                setPhone(inputValue);
-
-                if (!isPhone && inputValue.length !== 12) {
+                if (!isPhone) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter valid phone numbers");
                 } else {
                   e.target.classList.remove("input-error");
                 }
@@ -536,16 +495,14 @@ function FormPers() {
               value={email}
               onChange={(e) => {
                 const inputValue = e.target.value;
-                const isValidMail = isEmail(inputValue);
+                const isValidMail = ValidEmail(inputValue);
                 setEmail(inputValue);
 
                 e.target.classList.remove("input-error");
                 if (!isValidMail) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter a valid email address.");
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -555,30 +512,12 @@ function FormPers() {
               type="text"
               value={phone}
               onChange={(e) => {
-                let inputValue = e.target.value;
+                const [isPhone, cleanValue] = validPhone(e.target.value);
+                setPhone(cleanValue);
 
-                // Removing non-numeric characters
-                inputValue = inputValue.replace(/\D/g, "");
-                
-                // Auto-insert hyphens
-                if (inputValue.length > 6) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3, 6)}-${inputValue.slice(6)}`;
-                } else if (inputValue.length > 3) {
-                  inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`;
-                }
-
-                if (inputValue.length > 12) {
-                  inputValue = inputValue.slice(0, 12);
-                }
-
-                const isPhone = validPhone(inputValue)
-
-                setPhone(inputValue);
-
-                if (!isPhone && inputValue.length !== 12) {
+                if (!isPhone) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log("Please enter valid phone numbers");
                 } else {
                   e.target.classList.remove("input-error");
                 }
@@ -627,7 +566,6 @@ function FormPers() {
                     type="checkbox"
                     checked={typeA}
                     onChange={handleBoxACheck}
-                    // className="checkbox-input"
                     id="checkboxA"
                   />
                   สมาชิกตลอกชีพ 3,000 บาท
@@ -639,7 +577,6 @@ function FormPers() {
                     type="checkbox"
                     checked={typeB}
                     onChange={handleBoxBCheck}
-                    // className="checkbox-input"
                     id="checkboxB"
                   />
                   สมาชิกราย 2 ปี 500 บาท
@@ -667,11 +604,7 @@ function FormPers() {
                 if (!isValidThai) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -682,19 +615,14 @@ function FormPers() {
               value={taxIdNum}
               onChange={(e) => {
                 const inputValue = e.target.value;
-                const isValidNum = isNumOnly(inputValue);
+                const isValidNum = numOnly(inputValue);
                 setTaxIdNum(inputValue);
 
                 e.target.classList.remove("input-error");
-                // Perform validation
                 if (!isValidNum) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -709,15 +637,10 @@ function FormPers() {
                 setRecAddress(inputValue);
 
                 e.target.classList.remove("input-error");
-                // Perform validation
                 if (!isValidThai) {
                   // Invalid input, mark as invalid
                   e.target.classList.add("input-error");
-                  console.log(
-                    "Invalid input. Please enter Thai characters only."
-                  );
                 } else {
-                  // Clear error styles if input is valid
                   e.target.classList.remove("input-error");
                 }
               }}
@@ -743,7 +666,7 @@ function FormPers() {
               </button>
             </div>
           )}
-
+          <GoogleReCaptcha onVerify={handleCaptcha} />
           <div>
             {registrationResult && (
               <p className="registration-result">{registrationResult}</p>
@@ -751,7 +674,6 @@ function FormPers() {
           </div>
         </form>
       </div>
-    </GoogleReCaptchaProvider>
   );
 
 }
