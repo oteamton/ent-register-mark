@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import "../styles/form.css";
 import "../styles/fonts.css";
+import styles from "../styles/form.module.css";
 import {
   GoogleReCaptcha
 } from "react-google-recaptcha-v3";
@@ -13,11 +14,30 @@ import {
   numOnly,
 } from "../utils/validUtils";
 
+interface TextareaProps {
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  className?: string;
+}
+
+const TextareaInput: React.FC<TextareaProps> = ({ label, value, onChange, className }) => (
+  <div className="input-container">
+    <label>{label} :</label>
+    <textarea
+      value={value}
+      className={`${styles.input} ${className || ''}`}
+      onChange={onChange}
+    />
+  </div>
+);
+
 // Define a function component for the form field
 interface FormFieldProps {
   label: string;
   type: string;
   value: string;
+  className?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -27,6 +47,7 @@ const FormField: React.FC<FormFieldProps> = ({
   type,
   value,
   onChange,
+  className,
 }) => {
   return (
     <div className="input-container">
@@ -34,6 +55,7 @@ const FormField: React.FC<FormFieldProps> = ({
       <input
         type={type}
         value={value}
+        className={`${styles.input} ${className || ''}`}
         onChange={onChange}
       />
     </div>
@@ -46,7 +68,7 @@ function FormOrga() {
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
-  const [formtype] = useState<string>("Organisation");
+  const [formtype] = useState<string>("Organization/องค์กร");
   // Define state variables for registration
   const [registrationResult, setRegistrationResult] = useState<string | null>(
     null
@@ -279,7 +301,6 @@ function FormOrga() {
         formData.append("recName", recName);
         formData.append("taxIdNum", taxIdNum);
         formData.append("recAddress", recAddress);
-        // Append membership types if they exist
         if (typeA) {
           formData.append("typeA", "setTypeA");
         }
@@ -307,7 +328,7 @@ function FormOrga() {
   };
 
   return (
-    <div className="reg-body">
+    <div className="reg-body org">
       <div className="tabs">
         <button
           className={`tabs-nav-first ${activeBtn === "first-form" ? "active-button" : ""
@@ -398,6 +419,7 @@ function FormOrga() {
             label="ที่อยู่หน่วยงาน"
             type="text"
             value={address}
+            className={styles.specInput}
             onChange={(e) => {
               const inputValue = e.target.value;
               setAddress(inputValue);

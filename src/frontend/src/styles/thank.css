@@ -1,0 +1,34 @@
+.thank-you-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  font-family: "Kanit";
+  min-height: 100vh;
+  font-size: 2.5vw; /* Initial responsive font size */
+  background-color: #4175fc;
+  z-index: 2;
+}
+
+/* Set a minimum font size */
+.thank-you-container h1 {
+  font-size: calc(
+    1rem + 1.5vw
+  ); /* This makes the font size responsive, but ensures it never gets smaller than 1rem */
+  max-width: 90%; /* to ensure the text doesn't stretch too wide on large screens */
+  margin: 0 auto; /* to center the text block if it's less than 90% of the width */
+}
+
+.thank-you-container img {
+  width: 100%;
+  max-width: 280px; /* Original width of your image, can adjust as needed */
+  margin-bottom: 40px;
+}
+
+/* Mobile adjustments using a media query */
+@media (max-width: 768px) {
+  .thank-you-container h1 {
+    font-size: calc(1rem + 2.5vw); /* slightly bigger font size for mobile */
+  }
+}

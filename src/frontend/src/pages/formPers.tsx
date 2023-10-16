@@ -49,7 +49,7 @@ function FormPers() {
   const firstFormRef = useRef<HTMLDivElement>(null);
   const secondFormRef = useRef<HTMLDivElement>(null);
   const [canProceed, setCanProceed] = useState<boolean>(false);
-  const [formtype] = useState<string>("Individual");
+  const [formtype] = useState<string>("Individual/เฉพาะบุคคล");
   // Define state variables for registration
   const [registrationResult, setRegistrationResult] = useState<string | null>(
     null
@@ -274,7 +274,7 @@ function FormPers() {
 
   return (
     
-      <div className="reg-body">
+      <div className="reg-body per">
         <div className="tabs">
           <button
             className={`tabs-nav-first ${activeBtn === "first-form" ? "active-btn" : ""

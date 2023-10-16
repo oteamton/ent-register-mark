@@ -6,7 +6,7 @@
   text-wrap: nowrap;
   width: 100%;
   max-height: auto;
-  background-color: #fff;
+  /* background-color: #ffbf004c; for individual tabs */
 }
 
 .tabs button {
@@ -44,8 +44,8 @@
   height: 100%;
   font-size: 1rem;
   font-family: "Kanit", sans-serif;
-  background-color: #ffffff;
-  padding: 10px 200px 0 200px;
+  /* background-color: #ffbf004c;  for individual tabs */
+  padding: 10px 200px 40px 200px;
 }
 .cont-p-form input:focus,
 .pers-form input:focus,
@@ -122,6 +122,14 @@ label {
   overflow: hidden;
 }
 
+.org {
+  background-color: #00d0ff4c;
+}
+
+.per {
+  background-color: #ffbf004c;
+}
+
 .reg-body input[type="text"],
 [type="email"] {
   flex: 2;
@@ -155,6 +163,7 @@ label {
 .alt-rep-form div input.input-error,
 .paym-form div input.input-error {
   border: 2px solid red !important;
+  box-shadow: 0 0 5px red !important;
 }
 
 .type-p-form p,
@@ -324,7 +333,7 @@ span:hover {
   border-radius: 6px;
 }
 .btn-container-p button {
-  background-color: #ffe599;
+  background-color: #ffe140;
 }
 
 /* Hover effect */
@@ -360,7 +369,7 @@ span:hover {
   }
 }
 
-Footer{
+Footer {
   position: relative;
   bottom: 0;
 }

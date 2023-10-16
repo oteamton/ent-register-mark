@@ -14,22 +14,74 @@ header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['form'])) {
+        $formType = $_POST['form'];
 
-    $requiredFields = [
-        'form',
-        'orgNameth', 'orgNameEn', 'address', 'phone', 'fax', 'contName', 'contEmail', 'contLine',
-        'repName', 'repPosition', 'repAgency', 'repFax', 'repPhone', 'repEmail', 'repLine',
-        'altRepName', 'altRepPosition', 'altRepAgency', 'altRepFax', 'altRepPhone', 'altRepEmail', 'altRepLine',
-        'recName', 'taxIdNum', 'recAddress', 'recaptchaToken'
-    ];
+        switch ($formType) {
+            case 'Organization/องค์กร':
+                $requiredFields = [
+                    'form',
+                    'orgNameth', 'orgNameEn', 'address', 'phone', 'fax', 'contName', 'contEmail', 'contLine',
+                    'repName', 'repPosition', 'repAgency', 'repFax', 'repPhone', 'repEmail', 'repLine',
+                    'altRepName', 'altRepPosition', 'altRepAgency', 'altRepFax', 'altRepPhone', 'altRepEmail', 'altRepLine',
+                    'recName', 'taxIdNum', 'recAddress', 'recaptchaToken'
+                ];
+
+                $fieldMappings = [
+                    'form' => ['label' => 'แบบฟอร์ม', 'section' => 'header'],
+                    // องค์กร
+                    'orgNameth' => ['label' => 'ชื่อบริษัท (ภาษาไทย)', 'section' => 'organization'],
+                    'orgNameEn' => ['label' => 'ชื่อบริษัท (ภาษาอังกฤษ)', 'section' => 'organization'],
+                    'address' => ['label' => 'ที่อยู่', 'section' => 'organization'],
+                    'phone' => ['label' => 'โทรศัพท์', 'section' => 'organization'],
+                    'fax' => ['label' => 'โทรสาร', 'section' => 'organization'],
+                    // ผู้ประสานงาน
+                    'contName' => ['label' => 'ชื่อและนามสกุล', 'section' => 'contractor'],
+                    'contEmail' => ['label' => 'อีเมล์', 'section' => 'contractor'],
+                    'contLine' => ['label' => 'เบอร์โทรศัพท์', 'section' => 'contractor'],
+                    // ผู้ประสานงานแทน
+                    'repName' => ['label' => 'ชื่อและนามสกุล', 'section' => 'representative'],
+                    'repPosition' => ['label' => 'ตําแหน่ง', 'section' => 'representative'],
+                    'repAgency' => ['label' => 'หน่วยงาน', 'section' => 'representative'],
+                    'repFax' => ['label' => 'โทรสาร', 'section' => 'representative'],
+                    'repPhone' => ['label' => 'โทรศัพท์', 'section' => 'representative'],
+                    'repEmail' => ['label' => 'อีเมล์', 'section' => 'representative'],
+                    'repLine' => ['label' => 'เบอร์โทรศัพท์', 'section' => 'representative'],
+                    // ผู้สำรองผู้ประสานงานแทน
+                    'altRepName' => ['label' => 'ชื่อและนามสกุล', 'section' => 'alternate representative'],
+                    'altRepPosition' => ['label' => 'ตําแหน่ง', 'section' => 'alternate representative'],
+                    'altRepAgency' => ['label' => 'หน่วยงาน', 'section' => 'alternate representative'],
+                    'altRepFax' => ['label' => 'โทรสาร', 'section' => 'alternate representative'],
+                    'altRepPhone' => ['label' => 'โทรศัพท์', 'section' => 'alternate representative'],
+                    'altRepEmail' => ['label' => 'อีเมล์', 'section' => 'alternate representative'],
+                    'altRepLine' => ['label' => 'เบอร์โทรศัพท์', 'section' => 'alternate representative'],
+                    // รูปแบบการเป็นสมาชิก
+                    'selectedType' => ['label' => 'รูปแบบการสมัครสมาชิก', 'section' => 'type'],
+                    // ใบเสร็จ
+                    'recName' => ['label' => 'ชื่อและนามสกุล', 'section' => 'recipient'],
+                    'taxIdNum' => ['label' => 'เลขประจําตัวผู้เสียภาษี', 'section' => 'recipient'],
+                    'recAddress' => ['label' => 'ที่อยู่', 'section' => 'recipient'],
+                ];
+                // Set membership type
+                $memberType = isset($_POST['typeA']) ? "สมาชิกตลอกชีพ 100,000 บาท" : (isset($_POST['typeB']) ? "สมาชิกราย 3 ปี 30,000 บาท" : "");
+                $data['seletedType'] = $memberType;
+                break;
+
+            case 'Individual/เฉพาะบุคคล':
+                break;
+
+            default:
+                // Error handling
+                
+                break;
+        }
+    }
 
     $data = [];
     foreach ($requiredFields as $field) {
-        $data[$field] = $_POST[$field] ?? '';
+        $dataField = $fieldMappings[$field] ?? $field;
+        $data[$dataField] = $_POST[$field] ?? '';
     }
-
-    // Set membership type
-    $data['selectedType'] = isset($_POST['typeA']) ? "สมาชิกตลอกชีพ 100,000 บาท" : (isset($_POST['typeB']) ? "สมาชิกราย 3 ปี 30,000 บาท" : "");
 
     saveData($data);
 
@@ -97,13 +149,23 @@ function saveData(array $data)
     return true;
 }
 
-
 function sendMail($data)
 {
     // Construct email body
-    $emailBody = "<h2>Details submitted:\n</h2><ul>";
+    $emailBody = "<h2>Details/รายละเอียด :\n</h2><ul>";
+
+    $currentSection = "";
     foreach ($data as $key => $value) {
-        $emailBody .= "<li><strong>" . ucfirst($key) . "</strong>" . ": " . htmlspecialchars($value) . "</li>";
+        if (isset($fieldMappings[$key])) {
+            if ($fieldMappings[$key]['section'] !== $currentSection) {
+                $currentSection = $fieldMappings[$key]['section'];
+                $emailBody .= "<h3>" . $currentSection . "</h3>";
+            }
+            $label = $fieldMappings[$key]['label'];
+            $emailBody .= "<li><strong>" . $label . "</strong>: " . htmlspecialchars($value) . "</li>";
+        } else {
+            $emailBody .= "<li><strong>" . ucfirst($key) . "</strong>" . ": " . htmlspecialchars($value) . "</li>";
+        }
     }
     $emailBody .= "</ul>";
 

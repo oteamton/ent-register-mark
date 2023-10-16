@@ -1,14 +1,13 @@
 import React from 'react';
-import DotCircle from '../components/dotCircle';
+import '../styles/fonts.css';
+import '../styles/thank.css';
+
 const ThankYou: React.FC = () => {
 
     return (
-
         <div className="thank-you-container">
-            <div id="dotContainer">
-                <h1>ขอบคุณสำหรับการเข้าเป็นสมัครชิก Engagement thailand</h1>
-                <DotCircle radius={500} numberOfDots={222} />
-            </div>
+            <img src="/Ent_logo280.png" alt="EntLogo" />
+            <h1>ขอบคุณสำหรับการเข้าเป็นสมัครชิก Engagement thailand</h1>
         </div>
     );
 }
