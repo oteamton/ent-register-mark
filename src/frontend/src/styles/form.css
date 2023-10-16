@@ -6,7 +6,6 @@
   text-wrap: nowrap;
   width: 100%;
   max-height: auto;
-  /* background-color: #ffbf004c; for individual tabs */
 }
 
 .tabs button {
@@ -44,9 +43,10 @@
   height: 100%;
   font-size: 1rem;
   font-family: "Kanit", sans-serif;
-  /* background-color: #ffbf004c;  for individual tabs */
   padding: 10px 200px 40px 200px;
 }
+.inst-form textarea:focus,
+.cont-p-form textarea:focus,
 .cont-p-form input:focus,
 .pers-form input:focus,
 .inst-form input:focus,
@@ -56,6 +56,7 @@
 }
 
 .org-form input:focus,
+.org-form textarea:focus,
 .cont-form input:focus,
 .rep-form input:focus,
 .alt-rep-form input:focus,
@@ -144,6 +145,23 @@ label {
   text-align: start;
 }
 
+.reg-body textarea {
+  flex: 2;
+  max-width: calc(300px - 18px);
+  min-width: calc(50px - 18px);
+  line-height: 1.2em;
+  min-height: 3.6em;
+  border: #00d0ff 1.5px solid;
+  border-radius: 50px;
+  font-family: "Kanit", sans-serif;
+  font-size: 1rem;
+  text-align: start;
+  padding-left: 18px;
+  overflow-y: hidden;
+}
+
+.inst-form textarea,
+.cont-p-form textarea,
 .pers-form input,
 .inst-form input,
 .type-p-form input,
@@ -152,6 +170,7 @@ label {
   border: #ffc000 1.5px solid !important;
 }
 
+textarea.input-error,
 .type-p-form div input.input-error,
 .paym-p-form div input.input-error,
 .pers-form div input.input-error,
@@ -374,6 +393,7 @@ Footer {
   bottom: 0;
 }
 
+/* Responsive screen for mobile */
 @media (max-width: 768px) {
   .tabs {
     flex-direction: row;
@@ -389,6 +409,32 @@ Footer {
 }
 
 @media screen and (max-width: 768px) {
+  .tabs {
+    width: 100%;
+    /* Make it full-width on smaller screens */
+    max-width: 100%;
+    /* Ensure it doesn't exceed the viewport width */
+    height: auto;
+    /* Allow content to determine height */
+  }
+}
+
+/* Responsive for ipad and bigger screens */
+@media (max-width: 1300px) {
+  .tabs {
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 100px 40px 100px;
+  }
+}
+
+@media screen and (max-width: 1300px) {
   .tabs {
     width: 100%;
     /* Make it full-width on smaller screens */

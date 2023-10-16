@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import "../styles/form.css";
 import "../styles/fonts.css";
-import styles from "../styles/form.module.css";
 import {
   GoogleReCaptcha
 } from "react-google-recaptcha-v3";
@@ -14,31 +13,12 @@ import {
   numOnly,
 } from "../utils/validUtils";
 
-interface TextareaProps {
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  className?: string;
-}
-
-const TextareaInput: React.FC<TextareaProps> = ({ label, value, onChange, className }) => (
-  <div className="input-container">
-    <label>{label} :</label>
-    <textarea
-      value={value}
-      className={`${styles.input} ${className || ''}`}
-      onChange={onChange}
-    />
-  </div>
-);
-
 // Define a function component for the form field
 interface FormFieldProps {
   label: string;
   type: string;
   value: string;
-  className?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -47,17 +27,22 @@ const FormField: React.FC<FormFieldProps> = ({
   type,
   value,
   onChange,
-  className,
 }) => {
   return (
     <div className="input-container">
       <label>{label} :</label>
-      <input
-        type={type}
-        value={value}
-        className={`${styles.input} ${className || ''}`}
-        onChange={onChange}
-      />
+      {
+        type === "textarea"
+          ? <textarea
+            value={value}
+            onChange={onChange}
+          />
+          :
+          <input
+            type={type}
+            value={value}
+            onChange={onChange}
+          />}
     </div>
   );
 };
@@ -417,9 +402,9 @@ function FormOrga() {
           />
           <FormField
             label="ที่อยู่หน่วยงาน"
-            type="text"
+            type="textarea"
             value={address}
-            className={styles.specInput}
+            // className={styles.specInput}
             onChange={(e) => {
               const inputValue = e.target.value;
               setAddress(inputValue);
@@ -870,7 +855,7 @@ function FormOrga() {
           />
           <FormField
             label="ที่อยู่ในการออกใบเสร็จ"
-            type="text"
+            type="textarea"
             value={recAddress}
             onChange={(e) => {
               const inputValue = e.target.value;

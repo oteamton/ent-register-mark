@@ -19,7 +19,7 @@ interface FormFieldProps {
   type: string;
   value: string;
   placeholder?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -33,12 +33,20 @@ const FormField: React.FC<FormFieldProps> = ({
   return (
     <div className="input-container">
       <label>{label} :</label>
-      <input
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={onChange}
-      />
+      {
+        type === "textarea"
+          ? <textarea
+            value={value}
+            onChange={onChange}
+          />
+          :
+          <input
+            type={type}
+            value={value}
+            placeholder={placeholder}
+            onChange={onChange}
+          />
+      }
     </div>
   );
 };
@@ -273,407 +281,407 @@ function FormPers() {
   };
 
   return (
-    
-      <div className="reg-body per">
-        <div className="tabs">
-          <button
-            className={`tabs-nav-first ${activeBtn === "first-form" ? "active-btn" : ""
-              }`}
-            onClick={() => handleButtonClick("first-form", firstFormRef)}
-          >
-            ข้อมูลบุคคล
-          </button>
-          <button
-            className={`tabs-nav-end ${activeBtn === "second-form" ? "active-btn" : ""
-              }`}
-            onClick={() => {
-              if (
-                Nameth.trim() !== "" &&
-                NameEn.trim() !== "" &&
-                positionSci.trim() !== "" &&
-                instName.trim() !== "" &&
-                instNameEn.trim() !== "" &&
-                instAddress.trim() !== "" &&
-                instPhone.trim() !== "" &&
-                instFax.trim() !== "" &&
-                email.trim() !== "" &&
-                phone.trim() !== "" &&
-                lineID.trim() !== "" &&
-                address.trim() !== ""
-              ) {
-                handleButtonClick("second-form", secondFormRef);
+
+    <div className="reg-body per">
+      <div className="tabs">
+        <button
+          className={`tabs-nav-first ${activeBtn === "first-form" ? "active-btn" : ""
+            }`}
+          onClick={() => handleButtonClick("first-form", firstFormRef)}
+        >
+          ข้อมูลบุคคล
+        </button>
+        <button
+          className={`tabs-nav-end ${activeBtn === "second-form" ? "active-btn" : ""
+            }`}
+          onClick={() => {
+            if (
+              Nameth.trim() !== "" &&
+              NameEn.trim() !== "" &&
+              positionSci.trim() !== "" &&
+              instName.trim() !== "" &&
+              instNameEn.trim() !== "" &&
+              instAddress.trim() !== "" &&
+              instPhone.trim() !== "" &&
+              instFax.trim() !== "" &&
+              email.trim() !== "" &&
+              phone.trim() !== "" &&
+              lineID.trim() !== "" &&
+              address.trim() !== ""
+            ) {
+              handleButtonClick("second-form", secondFormRef);
+            } else {
+              alert("กรุณากรอกข้อมูลให้ครบ");
+            }
+          }}
+        >
+          การชำระเงิน
+        </button>
+      </div>
+
+      <form className="form" onSubmit={handleSubmit}>
+        <div
+          className={`pers-form ${activeForm === "first-form" ? "active-form" : ""
+            }`}
+        >
+          <p>บุคคล</p>
+          {/* Personal */}
+          <FormField
+            label="ชื่อ นามสกุล"
+            type="text"
+            value={Nameth}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidThai = isThaiOnly(inputValue);
+              setNameth(inputValue);
+
+              e.target.classList.remove("input-error");
+              if (!isValidThai) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
               } else {
-                alert("กรุณากรอกข้อมูลให้ครบ");
+                e.target.classList.remove("input-error");
               }
             }}
-          >
-            การชำระเงิน
-          </button>
+          />
+          <FormField
+            label="ชื่อ นามสกุล (ภาษาอังกฤษ)"
+            type="text"
+            value={NameEn}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidEng = isEngOnly(inputValue);
+
+              setNameEn(inputValue);
+              e.target.classList.remove("input-error");
+              if (!isValidEng) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
+                e.target.classList.remove("input-error");
+              }
+            }}
+          />
+          <FormField
+            label="ตำแหน่งทางวิชาการ"
+            type="text"
+            value={positionSci}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidThai = isThaiOnly(inputValue);
+              setPositionSci(inputValue);
+
+              e.target.classList.remove("input-error");
+              if (!isValidThai) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
+                e.target.classList.remove("input-error");
+              }
+            }}
+          />
+          <FormField
+            label="ตำแหน่งบริหาร"
+            type="text"
+            value={positionBus}
+            placeholder="ถ้ามี"
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidThai = isThaiOnly(inputValue);
+              setPositionBus(inputValue);
+
+              e.target.classList.remove("input-error");
+              if (!isValidThai) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
+                e.target.classList.remove("input-error");
+              }
+            }}
+          />
         </div>
 
-        <form className="form" onSubmit={handleSubmit}>
-          <div
-            className={`pers-form ${activeForm === "first-form" ? "active-form" : ""
-              }`}
-          >
-            <p>บุคคล</p>
-            {/* Personal */}
-            <FormField
-              label="ชื่อ นามสกุล"
-              type="text"
-              value={Nameth}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
-                setNameth(inputValue);
+        <div
+          className={`inst-form ${activeForm === "first-form" ? "active-form" : ""
+            }`}
+        >
+          <p>ข้อมูลหน่วยงาน</p>
+          <FormField
+            label="ชื่อหน่วยงาน"
+            type="text"
+            value={instName}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidThai = isThaiOnly(inputValue);
+              setInstName(inputValue);
 
+              e.target.classList.remove("input-error");
+              if (!isValidThai) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="Name Surname"
-              type="text"
-              value={NameEn}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidEng = isEngOnly(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="ชื่อหน่วยงาน (ภาษาอังกฤษ)"
+            type="text"
+            value={instNameEn}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidEng = isEngOnly(inputValue);
+              setInstNameEn(inputValue);
 
-                setNameEn(inputValue);
+              e.target.classList.remove("input-error");
+              if (!isValidEng) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidEng) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="ตำแหน่งทางวิชาการ"
-              type="text"
-              value={positionSci}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
-                setPositionSci(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="ที่อยู่หน่วยงาน"
+            type="textarea"
+            value={instAddress}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setInstAddress(inputValue);
 
+              e.target.classList.remove("input-error");
+            }}
+            onKeyPress={(e) => {
+              if (isThaiOnly(e.key)) {
+                e.preventDefault();
+              }
+            }}
+          />
+          <FormField
+            label="โทรศัพท์"
+            type="text"
+            value={instPhone}
+            onChange={(e) => {
+              const [isPhone, cleanValue] = validPhone(e.target.value);
+              setInstPhone(cleanValue);
+
+              if (!isPhone) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="ตำแหน่งบริหาร"
-              type="text"
-              value={positionBus}
-              placeholder="ถ้ามี"
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
-                setPositionBus(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="โทรสาร"
+            type="text"
+            value={instFax}
+            onChange={(e) => {
+              const [isPhone, cleanValue] = validPhone(e.target.value);
+              setInstPhone(cleanValue);
 
+              if (!isPhone) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-          </div>
+              }
+            }}
+          />
+        </div>
 
-          <div
-            className={`inst-form ${activeForm === "first-form" ? "active-form" : ""
-              }`}
-          >
-            <p>ข้อมูลหน่วยงาน</p>
-            <FormField
-              label="ชื่อหน่วยงาน"
-              type="text"
-              value={instName}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
-                setInstName(inputValue);
+        <div
+          className={`cont-p-form ${activeForm === "first-form" ? "active-form" : ""
+            }`}
+        >
+          <p>ข้อมูลการติดต่อ</p>
+          <FormField
+            label="อีเมล"
+            type="email"
+            value={email}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidMail = ValidEmail(inputValue);
+              setEmail(inputValue);
 
+              e.target.classList.remove("input-error");
+              if (!isValidMail) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="ชื่อหน่วยงานภาษาอังกฤษ"
-              type="text"
-              value={instNameEn}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidEng = isEngOnly(inputValue);
-                setInstNameEn(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="โทรศัพท์มือถือ"
+            type="text"
+            value={phone}
+            onChange={(e) => {
+              const [isPhone, cleanValue] = validPhone(e.target.value);
+              setPhone(cleanValue);
 
+              if (!isPhone) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidEng) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="ที่อยู่หน่วยงาน"
-              type="text"
-              value={instAddress}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                setInstAddress(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="LINE ID"
+            type="text"
+            value={lineID}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setLineID(inputValue);
 
-                e.target.classList.remove("input-error");
-              }}
-              onKeyPress={(e) => {
-                if (isThaiOnly(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-            />
-            <FormField
-              label="โทรศัพท์"
-              type="text"
-              value={instPhone}
-              onChange={(e) => {
-                const [isPhone, cleanValue] = validPhone(e.target.value);
-                setInstPhone(cleanValue);
+              e.target.classList.remove("input-error");
+            }}
+          />
+          <FormField
+            label="ที่อยู่ที่ติดต่อได้"
+            type="textarea"
+            value={address}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setAddress(inputValue);
 
-                if (!isPhone) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="โทรสาร"
-              type="text"
-              value={instFax}
-              onChange={(e) => {
-                const [isPhone, cleanValue] = validPhone(e.target.value);
-                setInstPhone(cleanValue);
+              e.target.classList.remove("input-error");
+            }}
+          />
+        </div>
 
-                if (!isPhone) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-          </div>
+        <div className={`pay-detail-p ${activeForm === "second-form" ? "active-form" : ""
+          }`}>
+          <h1>กรุณาชำระค่าสมัครสมาชิก เข้าบัญชีออมทรัพย์</h1>
+          <p>สมาคมพันธกิจสัมพันธ์มหาวิทยาลัยกับสังคม เลขที่ <span onClick={() => handleCopyClick("3282503717")}>328-250371-7</span> ธนาคารไทยพาณิชย์ สาขาเมืองทองธานี</p>
+        </div>
 
-          <div
-            className={`cont-p-form ${activeForm === "first-form" ? "active-form" : ""
-              }`}
-          >
-            <p>ข้อมูลการติดต่อ</p>
-            <FormField
-              label="อีเมล"
-              type="email"
-              value={email}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidMail = ValidEmail(inputValue);
-                setEmail(inputValue);
-
-                e.target.classList.remove("input-error");
-                if (!isValidMail) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="โทรศัพท์มือถือ"
-              type="text"
-              value={phone}
-              onChange={(e) => {
-                const [isPhone, cleanValue] = validPhone(e.target.value);
-                setPhone(cleanValue);
-
-                if (!isPhone) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="LINE ID"
-              type="text"
-              value={lineID}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                setLineID(inputValue);
-
-                e.target.classList.remove("input-error");
-              }}
-            />
-            <FormField
-              label="ที่อยู่ที่ติดต่อได้"
-              type="text"
-              value={address}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                setAddress(inputValue);
-
-                e.target.classList.remove("input-error");
-              }}
-            />
-          </div>
-
-          <div className={`pay-detail-p ${activeForm === "second-form" ? "active-form" : ""
-            }`}>
-            <h1>กรุณาชำระค่าสมัครสมาชิก เข้าบัญชีออมทรัพย์</h1>
-            <p>สมาคมพันธกิจสัมพันธ์มหาวิทยาลัยกับสังคม เลขที่ <span onClick={() => handleCopyClick("3282503717")}>328-250371-7</span> ธนาคารไทยพาณิชย์ สาขาเมืองทองธานี</p>
-          </div>
-
-          <div
-            className={`type-p-form ${activeForm === "second-form" ? "active-form" : ""
-              }`}
-          >
-            <p>ประเภทการเป็นสมาชิก</p>
-            {/* Types of Registration*/}
-            <div className="checkbox-container">
-              <div id="box">
-                <label className="checkbox-label" htmlFor="checkboxA">
-                  <input
-                    type="checkbox"
-                    checked={typeA}
-                    onChange={handleBoxACheck}
-                    id="checkboxA"
-                  />
-                  สมาชิกตลอกชีพ 3,000 บาท
-                </label>
-              </div>
-              <div id="box">
-                <label className="checkbox-label" htmlFor="checkboxB">
-                  <input
-                    type="checkbox"
-                    checked={typeB}
-                    onChange={handleBoxBCheck}
-                    id="checkboxB"
-                  />
-                  สมาชิกราย 2 ปี 500 บาท
-                </label>
-              </div>
+        <div
+          className={`type-p-form ${activeForm === "second-form" ? "active-form" : ""
+            }`}
+        >
+          <p>ประเภทการเป็นสมาชิก</p>
+          {/* Types of Registration*/}
+          <div className="checkbox-container">
+            <div id="box">
+              <label className="checkbox-label" htmlFor="checkboxA">
+                <input
+                  type="checkbox"
+                  checked={typeA}
+                  onChange={handleBoxACheck}
+                  id="checkboxA"
+                />
+                สมาชิกตลอกชีพ 3,000 บาท
+              </label>
+            </div>
+            <div id="box">
+              <label className="checkbox-label" htmlFor="checkboxB">
+                <input
+                  type="checkbox"
+                  checked={typeB}
+                  onChange={handleBoxBCheck}
+                  id="checkboxB"
+                />
+                สมาชิกราย 2 ปี 500 บาท
+              </label>
             </div>
           </div>
-          <div
-            className={`paym-p-form ${activeForm === "second-form" ? "active-form" : ""
-              }`}
-          >
-            <p>การชำระเงิน</p>
-            {/* Payment */}
-            <FormField
-              label="ออกใบเสร็จในนาม"
-              type="text"
-              value={recName}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
-                setRecName(inputValue);
+        </div>
+        <div
+          className={`paym-p-form ${activeForm === "second-form" ? "active-form" : ""
+            }`}
+        >
+          <p>การชำระเงิน</p>
+          {/* Payment */}
+          <FormField
+            label="ออกใบเสร็จในนาม"
+            type="text"
+            value={recName}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidThai = isThaiOnly(inputValue);
+              setRecName(inputValue);
 
+              e.target.classList.remove("input-error");
+              // Perform validation
+              if (!isValidThai) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                // Perform validation
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="เลขประจําตัวผู้เสียภาษี"
-              type="text"
-              value={taxIdNum}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidNum = numOnly(inputValue);
-                setTaxIdNum(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="เลขประจําตัวผู้เสียภาษี"
+            type="text"
+            value={taxIdNum}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidNum = numOnly(inputValue);
+              setTaxIdNum(inputValue);
 
+              e.target.classList.remove("input-error");
+              if (!isValidNum) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidNum) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
-            <FormField
-              label="ที่อยู่ในการออกใบเสร็จ"
-              type="text"
-              value={recAddress}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const isValidThai = isThaiOnly(inputValue);
-                setRecAddress(inputValue);
+              }
+            }}
+          />
+          <FormField
+            label="ที่อยู่ในการออกใบเสร็จ"
+            type="textarea"
+            value={recAddress}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const isValidThai = isThaiOnly(inputValue);
+              setRecAddress(inputValue);
 
+              e.target.classList.remove("input-error");
+              if (!isValidThai) {
+                // Invalid input, mark as invalid
+                e.target.classList.add("input-error");
+              } else {
                 e.target.classList.remove("input-error");
-                if (!isValidThai) {
-                  // Invalid input, mark as invalid
-                  e.target.classList.add("input-error");
-                } else {
-                  e.target.classList.remove("input-error");
-                }
-              }}
-            />
+              }
+            }}
+          />
+        </div>
+
+        {activeForm === "first-form" && (
+          <div className="btn-container-p">
+            <button id="next" type="button" onClick={handleFirstFormSubmit}>
+              หน้าถัดไป
+            </button>
+            <button id="cancel" type="reset" onClick={handleCancel}>
+              ยกเลิก
+            </button>
           </div>
+        )}
 
-          {activeForm === "first-form" && (
-            <div className="btn-container-p">
-              <button id="next" type="button" onClick={handleFirstFormSubmit}>
-                หน้าถัดไป
-              </button>
-              <button id="cancel" type="reset" onClick={handleCancel}>
-                ยกเลิก
-              </button>
-            </div>
+        {activeForm === "second-form" && (
+          <div className="btn-container-p">
+            <button type="submit">สมัครสมาชิก</button>
+            <button type="button" onClick={handleBack}>
+              ย้อนกลับ
+            </button>
+          </div>
+        )}
+        <GoogleReCaptcha onVerify={handleCaptcha} />
+        <div>
+          {registrationResult && (
+            <p className="registration-result">{registrationResult}</p>
           )}
-
-          {activeForm === "second-form" && (
-            <div className="btn-container-p">
-              <button type="submit">สมัครสมาชิก</button>
-              <button type="button" onClick={handleBack}>
-                ย้อนกลับ
-              </button>
-            </div>
-          )}
-          <GoogleReCaptcha onVerify={handleCaptcha} />
-          <div>
-            {registrationResult && (
-              <p className="registration-result">{registrationResult}</p>
-            )}
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
+    </div>
   );
 
 }
