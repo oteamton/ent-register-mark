@@ -58,29 +58,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // รูปแบบการเป็นสมาชิก
                     'selectedType' => ['label' => 'รูปแบบการสมัครสมาชิก', 'section' => 'type'],
                     // ใบเสร็จ
-                    'recName' => ['label' => 'ชื่อและนามสกุล', 'section' => 'recipient'],
+                    'recName' => ['label' => 'ชื่อและนามสกุลในการออกใบเสร็จ', 'section' => 'recipient'],
                     'taxIdNum' => ['label' => 'เลขประจําตัวผู้เสียภาษี', 'section' => 'recipient'],
-                    'recAddress' => ['label' => 'ที่อยู่', 'section' => 'recipient'],
+                    'recAddress' => ['label' => 'ที่อยู่ในการออกใบเสร็จ', 'section' => 'recipient'],
                 ];
                 // Set membership type
                 $memberType = isset($_POST['typeA']) ? "สมาชิกตลอกชีพ 100,000 บาท" : (isset($_POST['typeB']) ? "สมาชิกราย 3 ปี 30,000 บาท" : "");
+
+                $data = [];
+                foreach ($requiredFields as $field) {
+                    $dataField = isset($fieldMappings[$field]) ? $fieldMappings[$field]['label'] : $field;
+                    $data[$dataField] = $_POST[$field] ?? '';
+                }
                 $data['seletedType'] = $memberType;
                 break;
 
             case 'Individual/เฉพาะบุคคล':
+                $requiredFields = [
+                    'form',
+                    'Nameth', 'NameEn', 'positionSci', 'positionBus', 'address', 'phone', 'fax', 'email', 'lineID',
+                    'instName', 'instNameEn', 'instAddress', 'instPhone', 'instFax',
+                    'recName', 'taxIdNum', 'recAddress', 'recaptchaToken'
+                ];
+
+                $fieldMappings = [
+                    'form' => ['label' => 'แบบฟอร์ม'],
+                    // บุคคล
+                    'Nameth' => ['label' => 'ชื่อ นามสกุล'],
+                    'NameEn' => ['label' => 'ชื่อ นามสกุล (อังกฤษ)'],
+                    'positionSci' => ['label' => 'ตําแหน่งทางวิชาการ'],
+                    'positionBus' => ['label' => 'ตําแหน่งทางบริหาร'],
+                    'address' => ['label' => 'ที่อยู่ที่ติดต่อได้'],
+                    'phone' => ['label' => 'โทรศัพท์'],
+                    'fax' => ['label' => 'โทรสาร'],
+                    'email' => ['label' => 'อีเมล์'],
+                    'lineID' => ['label' => 'Line ID'],
+                    // หน่วยงาน
+                    'instName' => ['label' => 'ชื่อหน่วยงาน'],
+                    'instNameEn' => ['label' => 'ชื่อหน่วยงาน (อังกฤษ)'],
+                    'instAddress' => ['label' => 'ที่อยู่หน่วยงาน'],
+                    'instPhone' => ['label' => 'โทรศัพท์หน่วยงาน'],
+                    'instFax' => ['label' => 'โทรสารหน่วยงาน'],
+                    // ใบเสร็จ
+                    'recName' => ['label' => 'ชื่อและนามสกุลในการออกใบเสร็จ'],
+                    'taxIdNum' => ['label' => 'เลขประจําตัวผู้เสียภาษี'],
+                    'recAddress' => ['label' => 'ที่อยู่ในการออกใบเสร็จ'],
+                ];
+                // Set membership type
+                $memberType = isset($_POST['typeA']) ? "สมาชิกตลอกชีพ 3,000 บาท" : (isset($_POST['typeB']) ? "สมาชิกราย 2 ปี 500 บาท " : "");
+
+                $data = [];
+                foreach ($requiredFields as $field) {
+                    $dataField = isset($fieldMappings[$field]) ? $fieldMappings[$field]['label'] : $field;
+                    $data[$dataField] = $_POST[$field] ?? '';
+                }
+                $data['seletedType'] = $memberType;
                 break;
 
             default:
                 // Error handling
-                
-                break;
+                exit;
         }
-    }
-
-    $data = [];
-    foreach ($requiredFields as $field) {
-        $dataField = $fieldMappings[$field] ?? $field;
-        $data[$dataField] = $_POST[$field] ?? '';
     }
 
     saveData($data);
@@ -119,11 +157,8 @@ function saveData(array $data)
     if (flock($handle, LOCK_EX)) {  // Acquire an exclusive lock
         if (file_exists($filename) && filesize($filename) > 0) {
             $existingData = json_decode(fread($handle, filesize($filename)), true);
-            if ($existingData === null) {
-                // Handle error - couldn't decode the JSON
-                error_log("Error: Unable to decode the JSON data from $filename");
-                fclose($handle);
-                return false;
+            if ($existingData === null && json_last_error() !== JSON_ERROR_NONE) {
+                error_log("JSON decode error: " . json_last_error_msg());
             }
         }
 
@@ -151,6 +186,7 @@ function saveData(array $data)
 
 function sendMail($data)
 {
+
     // Construct email body
     $emailBody = "<h2>Details/รายละเอียด :\n</h2><ul>";
 
@@ -170,6 +206,10 @@ function sendMail($data)
     $emailBody .= "</ul>";
 
     $mail = new PHPMailer(true);
+
+    $mail->CharSet = 'UTF-8';
+    $mail->ContentType = 'text/html';
+
     try {
         //Server settings
         $mail->SMTPDebug = 0; // Enable verbose debug output
@@ -184,7 +224,7 @@ function sendMail($data)
         //to Engagement Admin
         $mail->setFrom($_ENV['MAIL_USERNAME'], 'SWU');
         $mail->addAddress('zelazideqc@gmail.com', 'Admin'); // Add a recipient
-        $mail->Subject = 'Ent Registration';
+        $mail->Subject = 'Ent Registration to Admin';
         $mail->Body = $emailBody;
         $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
         $mail->send();
@@ -197,7 +237,14 @@ function sendMail($data)
 
         // To Applicant
         $mail->setFrom($_ENV['MAIL_USERNAME'], 'SWU');
-        $mail->addAddress($data['contEmail'], 'Registered User'); // Add a recipient
+        $mail->addAddress($data['email'], 'Registered User');
+        // if (isset($data['email'])) {
+        //     $mail->addAddress($data['email'], 'Registered User');
+        // } elseif (isset($data['contEmail'])) {
+        //     $mail->addAddress($data['contEmail'], 'Registered User');
+        // } else {
+        //     error_log("Email address not found");
+        // }
         $mail->Subject = 'Engagementthailand Registration';
         $mail->Body = '<b>Thank you for registering!</b></n>';
         $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';

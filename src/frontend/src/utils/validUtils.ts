@@ -13,7 +13,7 @@ export const isEngOnly = (input: string) => {
 };
 
 export const isThaiOnly = (input: string) => {
-  const thaiRegex = /^[ก-ฮ\s]*$/;
+  const thaiRegex = /^[ก-๛\s]*$/;
   return thaiRegex.test(input);
 };
 

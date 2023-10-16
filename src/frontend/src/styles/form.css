@@ -47,6 +47,7 @@
 }
 .inst-form textarea:focus,
 .cont-p-form textarea:focus,
+.paym-p-form textarea:focus,
 .cont-p-form input:focus,
 .pers-form input:focus,
 .inst-form input:focus,
@@ -162,6 +163,7 @@ label {
 
 .inst-form textarea,
 .cont-p-form textarea,
+.paym-p-form textarea,
 .pers-form input,
 .inst-form input,
 .type-p-form input,

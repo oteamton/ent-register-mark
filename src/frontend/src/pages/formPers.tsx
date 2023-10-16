@@ -480,7 +480,7 @@ function FormPers() {
             value={instFax}
             onChange={(e) => {
               const [isPhone, cleanValue] = validPhone(e.target.value);
-              setInstPhone(cleanValue);
+              setInstFax(cleanValue);
 
               if (!isPhone) {
                 // Invalid input, mark as invalid
