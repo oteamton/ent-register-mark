@@ -139,7 +139,7 @@ label {
   max-width: 300px;
   min-height: 30px;
   border: #00d0ff 1.5px solid;
-  border-radius: 50px;
+  border-radius: 9px;
   font-family: "Kanit", sans-serif;
   font-size: 1rem;
   text-indent: 18px;
@@ -153,7 +153,7 @@ label {
   line-height: 1.2em;
   min-height: 3.6em;
   border: #00d0ff 1.5px solid;
-  border-radius: 50px;
+  border-radius: 9px;
   font-family: "Kanit", sans-serif;
   font-size: 1rem;
   text-align: start;
@@ -353,6 +353,7 @@ span:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 6px;
 }
+
 .btn-container-p button {
   background-color: #ffe140;
 }

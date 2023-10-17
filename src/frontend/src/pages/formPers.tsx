@@ -249,13 +249,7 @@ function FormPers() {
         formData.append("instAddress", instAddress);
         formData.append("instPhone", instPhone);
         formData.append("instFax", instFax);
-        // Types of Registration
-        if (typeA) {
-          formData.append("typeA", "setTypeA");
-        }
-        if (typeB) {
-          formData.append("typeB", "setTypeB");
-        }
+        formData.append("selectedType", selectedType);
         // Payment
         formData.append("recName", recName);
         formData.append("taxIdNum", taxIdNum);

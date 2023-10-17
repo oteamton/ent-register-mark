@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom"
 import "../styles/form.css";
 import "../styles/fonts.css";
 import {
@@ -94,7 +95,7 @@ function FormOrga() {
   const [recName, setRecName] = useState("");
   const [taxIdNum, setTaxIdNum] = useState("");
   const [recAddress, setRecAddress] = useState("");
-
+  const nav = useNavigate();
   const handleButtonClick = (
     formName: string,
     formRef: React.RefObject<HTMLDivElement>
@@ -286,12 +287,7 @@ function FormOrga() {
         formData.append("recName", recName);
         formData.append("taxIdNum", taxIdNum);
         formData.append("recAddress", recAddress);
-        if (typeA) {
-          formData.append("typeA", "setTypeA");
-        }
-        if (typeB) {
-          formData.append("typeB", "setTypeB");
-        }
+        formData.append("selectedType", selectedType);
 
         const response = await fetch("http://localhost:8000/form.php", {
           method: "POST",
@@ -301,6 +297,7 @@ function FormOrga() {
         const responseData = await response.json();
         if (responseData.success) {
           console.log("Form submitted successfully");
+          nav('/thank')
         } else {
           console.error("Form submission failed");
         }
