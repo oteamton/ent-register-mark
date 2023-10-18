@@ -37,6 +37,7 @@ const FormField: React.FC<FormFieldProps> = ({
         type === "textarea"
           ? <textarea
             value={value}
+            placeholder={placeholder}
             onChange={onChange}
           />
           :
@@ -324,6 +325,7 @@ function FormPers() {
             label="ชื่อ นามสกุล"
             type="text"
             value={Nameth}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -342,6 +344,7 @@ function FormPers() {
             label="ชื่อ นามสกุล (ภาษาอังกฤษ)"
             type="text"
             value={NameEn}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidEng = isEngOnly(inputValue);
@@ -360,6 +363,7 @@ function FormPers() {
             label="ตำแหน่งทางวิชาการ"
             type="text"
             value={positionSci}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -404,6 +408,7 @@ function FormPers() {
             label="ชื่อหน่วยงาน"
             type="text"
             value={instName}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -422,6 +427,7 @@ function FormPers() {
             label="ชื่อหน่วยงาน (ภาษาอังกฤษ)"
             type="text"
             value={instNameEn}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidEng = isEngOnly(inputValue);
@@ -440,6 +446,7 @@ function FormPers() {
             label="ที่อยู่หน่วยงาน"
             type="textarea"
             value={instAddress}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               setInstAddress(inputValue);
@@ -456,6 +463,7 @@ function FormPers() {
             label="โทรศัพท์"
             type="text"
             value={instPhone}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const [isPhone, cleanValue] = validPhone(e.target.value);
               setInstPhone(cleanValue);
@@ -495,6 +503,7 @@ function FormPers() {
             label="อีเมล"
             type="email"
             value={email}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidMail = ValidEmail(inputValue);
@@ -513,6 +522,7 @@ function FormPers() {
             label="โทรศัพท์มือถือ"
             type="text"
             value={phone}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const [isPhone, cleanValue] = validPhone(e.target.value);
               setPhone(cleanValue);
@@ -540,6 +550,7 @@ function FormPers() {
             label="ที่อยู่ที่ติดต่อได้"
             type="textarea"
             value={address}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               setAddress(inputValue);
@@ -596,6 +607,7 @@ function FormPers() {
             label="ออกใบเสร็จในนาม"
             type="text"
             value={recName}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -615,6 +627,7 @@ function FormPers() {
             label="เลขประจําตัวผู้เสียภาษี"
             type="text"
             value={taxIdNum}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidNum = numOnly(inputValue);
@@ -633,6 +646,7 @@ function FormPers() {
             label="ที่อยู่ในการออกใบเสร็จ"
             type="textarea"
             value={recAddress}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);

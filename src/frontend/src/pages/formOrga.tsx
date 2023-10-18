@@ -20,6 +20,7 @@ interface FormFieldProps {
   label: string;
   type: string;
   value: string;
+  placeholder?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -28,6 +29,7 @@ const FormField: React.FC<FormFieldProps> = ({
   label,
   type,
   value,
+  placeholder,
   onChange,
 }) => {
   return (
@@ -37,12 +39,14 @@ const FormField: React.FC<FormFieldProps> = ({
         type === "textarea"
           ? <textarea
             value={value}
+            placeholder={placeholder}
             onChange={onChange}
           />
           :
           <input
             type={type}
             value={value}
+            placeholder={placeholder}
             onChange={onChange}
           />}
     </div>
@@ -365,6 +369,7 @@ function FormOrga() {
             label="ชื่อองค์กรภาษาไทย"
             type="text"
             value={orgNameth}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidEng = isThaiOnly(inputValue);
@@ -385,6 +390,7 @@ function FormOrga() {
             label="ชื่อองค์กรภาษาอังกฤษ"
             type="text"
             value={orgNameEn}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidEng = isEngOnly(inputValue);
@@ -402,7 +408,7 @@ function FormOrga() {
             label="ที่อยู่หน่วยงาน"
             type="textarea"
             value={address}
-            // className={styles.specInput}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               setAddress(inputValue);
@@ -412,6 +418,7 @@ function FormOrga() {
             label="โทรศัพท์"
             type="text"
             value={phone}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const [isPhone, cleanValue] = validPhone(e.target.value);
               setPhone(cleanValue);
@@ -452,6 +459,7 @@ function FormOrga() {
             label="ชื่อผู้ประสานงาน"
             type="text"
             value={contName}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -470,6 +478,7 @@ function FormOrga() {
             label="อีเมล"
             type="email"
             value={contEmail}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidMail = ValidEmail(inputValue);
@@ -513,6 +522,7 @@ function FormOrga() {
             label="ชื่อและนามสกุล"
             type="text"
             value={repName}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -531,6 +541,7 @@ function FormOrga() {
             label="หน่วยงาน"
             type="text"
             value={repAgency}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -549,6 +560,7 @@ function FormOrga() {
             label="ตำแหน่ง"
             type="text"
             value={repPosition}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -567,6 +579,7 @@ function FormOrga() {
             label="โทรศัพท์"
             type="text"
             value={repPhone}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const [isPhone, cleanValue] = validPhone(e.target.value);
               setRepPhone(cleanValue);
@@ -599,6 +612,7 @@ function FormOrga() {
             label="อีเมล"
             type="email"
             value={repEmail}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidMail = ValidEmail(inputValue);
@@ -641,6 +655,7 @@ function FormOrga() {
             label="ชื่อและนามสกุล"
             type="text"
             value={altRepName}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -659,6 +674,7 @@ function FormOrga() {
             label="หน่วยงาน"
             type="text"
             value={altRepAgency}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -678,6 +694,7 @@ function FormOrga() {
             label="ตำแหน่ง"
             type="text"
             value={altRepPosition}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -697,6 +714,7 @@ function FormOrga() {
             label="โทรศัพท์"
             type="text"
             value={altRepPhone}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const [isPhone, cleanValue] = validPhone(e.target.value);
               setAltRepPhone(cleanValue);
@@ -729,6 +747,7 @@ function FormOrga() {
             label="อีเมล"
             type="email"
             value={altRepEmail}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidMail = ValidEmail(inputValue);
@@ -819,6 +838,7 @@ function FormOrga() {
             label="ออกใบเสร็จในนาม"
             type="text"
             value={recName}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidThai = isThaiOnly(inputValue);
@@ -837,6 +857,7 @@ function FormOrga() {
             label="เลขประจําตัวผู้เสียภาษี"
             type="text"
             value={taxIdNum}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidNum = numOnly(inputValue);
@@ -855,6 +876,7 @@ function FormOrga() {
             label="ที่อยู่ในการออกใบเสร็จ"
             type="textarea"
             value={recAddress}
+            placeholder="จำเป็น"
             onChange={(e) => {
               const inputValue = e.target.value;
               setRecAddress(inputValue);
