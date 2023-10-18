@@ -238,7 +238,8 @@ function sendMail($data)
             $mail->addAddress($data['อีเมล์ของบุคคล'], 'Registered User');
         }
         $mail->Subject = 'Engagementthailand Registration';
-        $mail->Body = '<b>Thank you for registering!</b></n>';
+        $mail->AddEmbeddedImage('./images/bannerEnT.jpg', 'image_Ent');
+        $mail->Body = '<b>Thank you for registering!</b></n><br><br><img src="cid:image_Ent" alt="Footer Image" />';
         $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
         $mail->send();
 
