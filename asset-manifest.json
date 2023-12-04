@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.676200a1.css",
+    "main.js": "/static/js/main.99d8a649.js",
+    "static/js/787.cbc497a9.chunk.js": "/static/js/787.cbc497a9.chunk.js",
+    "static/media/Kanit-Light.ttf": "/static/media/Kanit-Light.7b6b95563f4c5697d973.ttf",
+    "index.html": "/index.html",
+    "main.676200a1.css.map": "/static/css/main.676200a1.css.map",
+    "main.99d8a649.js.map": "/static/js/main.99d8a649.js.map",
+    "787.cbc497a9.chunk.js.map": "/static/js/787.cbc497a9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.676200a1.css",
+    "static/js/main.99d8a649.js"
+  ]
+}
